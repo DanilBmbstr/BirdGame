@@ -25,9 +25,9 @@ import (
 	"strconv"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/cmd/mygame/assets"
-	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/mygame/collisionSystem"
-	"github.com/hajimehoshi/ebiten/v2/cmd/mygame/entity"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
+	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	input "github.com/quasilyte/ebitengine-input"
 	resource "github.com/quasilyte/ebitengine-resource"
@@ -36,7 +36,7 @@ import (
 
 var debugCollisions bool
 
-type myGame struct {
+type BirdGame struct {
 	windowWidth  int
 	windowHeight int
 	loader       *resource.Loader
@@ -47,7 +47,7 @@ type myGame struct {
 	testShape   collisionsystem.Shape
 }
 
-func (g *myGame) init() {
+func (g *BirdGame) init() {
 	g.loader = assets.CreateLoader()
 	//imgA := g.loader.LoadImage(assets.ImageA).Data
 	g.player = &entity.Player{TailLenght: 50, Speed: 2}
@@ -77,7 +77,7 @@ func (g *myGame) init() {
 
 }
 
-func (g *myGame) Update() error {
+func (g *BirdGame) Update() error {
 
 	x, y := ebiten.CursorPosition()
 
@@ -90,7 +90,7 @@ func (g *myGame) Update() error {
 	return nil
 }
 
-func (g *myGame) Draw(screen *ebiten.Image) {
+func (g *BirdGame) Draw(screen *ebiten.Image) {
 
 	g.testShape.DrawEntity(screen)
 
@@ -123,13 +123,13 @@ func (g *myGame) Draw(screen *ebiten.Image) {
 	*/
 }
 
-func (g *myGame) Layout(w, h int) (int, int) {
+func (g *BirdGame) Layout(w, h int) (int, int) {
 
 	return g.windowWidth, g.windowHeight
 }
 
 func main() {
-	g := &myGame{
+	g := &BirdGame{
 		windowWidth:  1000,
 		windowHeight: 1000,
 	}
