@@ -1,6 +1,7 @@
 package main
 
-/*░░░░░░░░░░░░░░░░░░▄▄░░░░░░░░░░░░░░░░░░
+/*
+░░░░░░░░░░░░░░░░░░▄▄░░░░░░░░░░░░░░░░░░
 ░░░░░░░░░░░░░░░░░▄██▄░░░░░░░░░░░░░░░░░
 ░░░░░░░░░░░░░░░░▄████▄░░░░░░░░░░░░░░░░
 ░░░░░░░░░░░░░░░░██████░░░░░░░░░░░░░░░░
@@ -25,12 +26,15 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/mygame/assets"
+	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/mygame/collisionSystem"
 	"github.com/hajimehoshi/ebiten/v2/cmd/mygame/entity"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	input "github.com/quasilyte/ebitengine-input"
 	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/gmath"
 )
+
+var debugCollisions bool
 
 type myGame struct {
 	windowWidth  int
@@ -40,6 +44,7 @@ type myGame struct {
 
 	inputSystem input.System
 	handler     *input.Handler
+	testShape   collisionsystem.Shape
 }
 
 func (g *myGame) init() {
@@ -65,11 +70,15 @@ func (g *myGame) init() {
 	})
 	g.handler = g.inputSystem.NewHandler(0, input.Keymap{})
 
+	g.testShape.Points = append(g.testShape.Points, gmath.Vec{X: 500, Y: 500})
+	g.testShape.Points = append(g.testShape.Points, gmath.Vec{X: 300, Y: 750})
+	g.testShape.Points = append(g.testShape.Points, gmath.Vec{X: 450, Y: 850})
+	g.testShape.Points = append(g.testShape.Points, gmath.Vec{X: 700, Y: 700})
+
 }
 
 func (g *myGame) Update() error {
 
-	//g.player.Center.X += 16 * (1.0 / 60.0)
 	x, y := ebiten.CursorPosition()
 
 	MousePosition := gmath.Vec{X: float64(x), Y: float64(y)}
@@ -77,14 +86,17 @@ func (g *myGame) Update() error {
 	g.player.RotateTowards(MousePosition, 0.1)
 
 	g.player.MoveForward()
-
-	//g.player.SetPosition(float64(x), float64(y))
+	debugCollisions = collisionsystem.CheckCollisionWithShape(g.player.Center, g.testShape)
 	return nil
 }
 
 func (g *myGame) Draw(screen *ebiten.Image) {
+
+	g.testShape.DrawEntity(screen)
+
 	g.player.DrawEntity(screen)
-	ebitenutil.DebugPrint(screen, strconv.FormatFloat(ebiten.ActualFPS(), 'f', 6, 64))
+
+	ebitenutil.DebugPrint(screen, strconv.FormatFloat(ebiten.ActualFPS(), 'f', 6, 64)+"\n"+strconv.FormatBool(debugCollisions))
 
 	/*
 
