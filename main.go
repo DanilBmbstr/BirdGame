@@ -37,6 +37,8 @@ import (
 var debugCollisions bool
 
 type BirdGame struct {
+	xOffset      int
+	yOffset      int
 	windowWidth  int
 	windowHeight int
 	loader       *resource.Loader
@@ -48,6 +50,8 @@ type BirdGame struct {
 }
 
 func (g *BirdGame) init() {
+	g.xOffset = 0
+	g.yOffset = 0
 	g.loader = assets.CreateLoader()
 	//imgA := g.loader.LoadImage(assets.ImageA).Data
 	g.player = &entity.Player{TailLenght: 50, Speed: 2}
@@ -83,18 +87,20 @@ func (g *BirdGame) Update() error {
 
 	MousePosition := gmath.Vec{X: float64(x), Y: float64(y)}
 
-	g.player.RotateTowards(MousePosition, 0.1)
+	g.player.Rotate(gmath.Vec{500, 500}.DirectionTo(MousePosition), 0.1)
 
 	g.player.MoveForward()
+	g.xOffset = int(g.player.Center.X) - 500
+	g.yOffset = int(g.player.Center.Y) - 500
 	debugCollisions = collisionsystem.CheckCollisionWithShape(g.player.Center, g.testShape)
 	return nil
 }
 
 func (g *BirdGame) Draw(screen *ebiten.Image) {
 
-	g.testShape.DrawEntity(screen)
+	g.testShape.DrawEntity(screen, g.xOffset, g.yOffset)
 
-	g.player.DrawEntity(screen)
+	g.player.DrawEntity(screen, g.xOffset, g.yOffset)
 
 	ebitenutil.DebugPrint(screen, strconv.FormatFloat(ebiten.ActualFPS(), 'f', 6, 64)+"\n"+strconv.FormatBool(debugCollisions))
 

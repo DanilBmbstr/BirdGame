@@ -10,11 +10,11 @@ type Shape struct {
 	Points []gmath.Vec
 }
 
-func (s *Shape) DrawEntity(screen *ebiten.Image) {
+func (s *Shape) DrawEntity(screen *ebiten.Image, xOffset, yOffset int) {
 	path := &vector.Path{}
-	path.MoveTo(s.Points[0].AsVec32().X, s.Points[0].AsVec32().Y)
+	path.MoveTo(s.Points[0].AsVec32().X-float32(xOffset), s.Points[0].AsVec32().Y-float32(yOffset))
 	for i := 1; i < len(s.Points); i++ {
-		path.LineTo(float32(s.Points[i].X), float32(s.Points[i].Y))
+		path.LineTo(float32(s.Points[i].X-float64(xOffset)), float32(s.Points[i].Y-float64(yOffset)))
 	}
 
 	path.Close()

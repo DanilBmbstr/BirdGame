@@ -30,7 +30,7 @@ type Sprite struct {
 	imageSize   gmath.Vec
 }
 
-func (s *Sprite) DrawSprite(screen *ebiten.Image) {
+func (s *Sprite) DrawSprite(screen *ebiten.Image, xOffset, yOffset int) {
 
 	rotationOffset := s.Origin.Rotated(s.Rotation)
 
@@ -40,7 +40,7 @@ func (s *Sprite) DrawSprite(screen *ebiten.Image) {
 
 	imageOptions.GeoM.Scale(s.scale, s.scale)
 	imageOptions.GeoM.Translate(-rotationOffset.X, -rotationOffset.Y)
-	imageOptions.GeoM.Translate(s.Position.X, s.Position.Y)
+	imageOptions.GeoM.Translate(s.Position.X-float64(xOffset), s.Position.Y-float64(yOffset))
 	screen.DrawImage(s.spriteImage, &imageOptions)
 
 }

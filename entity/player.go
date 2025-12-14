@@ -86,22 +86,22 @@ func (p *Player) getFlanks(width float64) (gmath.Vec, gmath.Vec) {
 	return left, right
 }
 
-func (p *Player) DrawEntity(screen *ebiten.Image) {
-	p.PlayerTail.DrawTail(screen)
+func (p *Player) DrawEntity(screen *ebiten.Image, xOffset, yOffset int) {
+	p.PlayerTail.DrawTail(screen, xOffset, yOffset)
 	left, right := p.getFlanks(tailStartWidth)
 	path := &vector.Path{}
-	path.MoveTo(p.Center.AsVec32().X, p.Center.AsVec32().Y)
+	path.MoveTo(p.Center.AsVec32().X-float32(xOffset), p.Center.AsVec32().Y-float32(yOffset))
 
-	path.LineTo(right.AsVec32().X, right.AsVec32().Y)
-	path.LineTo(float32(p.PlayerTail.segments[tailStartSegmentsLenght].getSegmentEnd(p.TailSegmentLenght+tailStartLenght).X), float32(p.PlayerTail.segments[3].getSegmentEnd(p.TailSegmentLenght).Y))
-	path.LineTo(left.AsVec32().X, left.AsVec32().Y)
+	path.LineTo(right.AsVec32().X-float32(xOffset), right.AsVec32().Y-float32(yOffset))
+	path.LineTo(float32(p.PlayerTail.segments[tailStartSegmentsLenght].getSegmentEnd(p.TailSegmentLenght+tailStartLenght).X-float64(xOffset)), float32(p.PlayerTail.segments[3].getSegmentEnd(p.TailSegmentLenght).Y-float64(yOffset)))
+	path.LineTo(left.AsVec32().X-float32(xOffset), left.AsVec32().Y-float32(yOffset))
 	path.Close()
 
 	vector.FillPath(screen, path, &vector.FillOptions{FillRule: vector.FillRuleEvenOdd}, &vector.DrawPathOptions{AntiAlias: true,
 		ColorScale: p.playerColor})
 
 	p.PlayerSprite.Position = p.Center
-	p.PlayerSprite.DrawSprite(screen)
+	p.PlayerSprite.DrawSprite(screen, xOffset, yOffset)
 
 	/*
 		//Создание фигуры птицы
@@ -120,6 +120,12 @@ func (p *Player) DrawEntity(screen *ebiten.Image) {
 		vector.FillPath(screen, path, &vector.FillOptions{FillRule: vector.FillRuleEvenOdd}, &vector.DrawPathOptions{AntiAlias: true,
 			ColorScale: cs})
 	*/
+
+}
+
+func (p *Player) Rotate(dest gmath.Vec, speed float64) {
+
+	p.Direction = p.Direction.LinearInterpolate(dest, speed)
 
 }
 

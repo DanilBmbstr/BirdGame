@@ -62,17 +62,17 @@ func (t *Tail) CreateTail(point gmath.Vec, max int) {
 	}
 }
 
-func (t *Tail) DrawTail(screen *ebiten.Image) {
+func (t *Tail) DrawTail(screen *ebiten.Image, xOffset, yOffset int) {
 	path := &vector.Path{}
 	for i := 0; i < len(t.segments)-1; i++ {
 		left, right := t.segments[i].getSegmentFlanks()
 		left2, right2 := t.segments[i+1].getSegmentFlanks()
 
-		path.MoveTo(left.AsVec32().X, left.AsVec32().Y)
+		path.MoveTo(left.AsVec32().X-float32(xOffset), left.AsVec32().Y-float32(yOffset))
 
-		path.LineTo(right.AsVec32().X, right.AsVec32().Y)
-		path.LineTo(right2.AsVec32().X, right2.AsVec32().Y)
-		path.LineTo(left2.AsVec32().X, left2.AsVec32().Y)
+		path.LineTo(right.AsVec32().X-float32(xOffset), right.AsVec32().Y-float32(yOffset))
+		path.LineTo(right2.AsVec32().X-float32(xOffset), right2.AsVec32().Y-float32(yOffset))
+		path.LineTo(left2.AsVec32().X-float32(xOffset), left2.AsVec32().Y-float32(yOffset))
 		path.Close()
 
 	}
