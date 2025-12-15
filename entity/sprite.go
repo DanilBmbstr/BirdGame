@@ -18,6 +18,7 @@ package entity
 ⣿⣿⣿⣿⣿⣿⣿⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿*/
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
 	"github.com/quasilyte/gmath"
 )
 
@@ -31,7 +32,8 @@ type Sprite struct {
 }
 
 func (s *Sprite) DrawSprite(screen *ebiten.Image) {
-
+	xOffset := camera.X_offset - camera.WindowSizeX/2
+	yOffset := camera.Y_offset - camera.WindowSizeY/2
 	rotationOffset := s.Origin.Rotated(s.Rotation)
 
 	imageOptions := ebiten.DrawImageOptions{}
@@ -40,7 +42,7 @@ func (s *Sprite) DrawSprite(screen *ebiten.Image) {
 
 	imageOptions.GeoM.Scale(s.scale, s.scale)
 	imageOptions.GeoM.Translate(-rotationOffset.X, -rotationOffset.Y)
-	imageOptions.GeoM.Translate(s.Position.X, s.Position.Y)
+	imageOptions.GeoM.Translate(s.Position.X-xOffset, s.Position.Y-yOffset)
 	screen.DrawImage(s.spriteImage, &imageOptions)
 
 }

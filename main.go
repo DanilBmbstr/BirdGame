@@ -26,6 +26,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
 	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -78,12 +79,18 @@ func (g *BirdGame) init() {
 }
 
 func (g *BirdGame) Update() error {
+	//Обновляем камеру
+	camera.X_offset = g.player.Center.X
+	camera.Y_offset = g.player.Center.Y
+	camera.WindowSizeX = float64(g.windowWidth)
+	camera.WindowSizeY = float64(g.windowHeight)
+	//
 
 	x, y := ebiten.CursorPosition()
 
 	MousePosition := gmath.Vec{X: float64(x), Y: float64(y)}
 
-	g.player.RotateTowards(MousePosition, 0.1)
+	g.player.Rotate(MousePosition, 0.1)
 
 	g.player.MoveForward()
 	debugCollisions = collisionsystem.CheckCollisionWithShape(g.player.Center, g.testShape)
@@ -98,29 +105,6 @@ func (g *BirdGame) Draw(screen *ebiten.Image) {
 
 	ebitenutil.DebugPrint(screen, strconv.FormatFloat(ebiten.ActualFPS(), 'f', 6, 64)+"\n"+strconv.FormatBool(debugCollisions))
 
-	/*
-
-
-		vector.FillCircle(screen, 60, 70, 50, color.RGBA{255, 255, 255, 255}, true)
-		path := &vector.Path{}
-
-		// Define a triangle
-		path.MoveTo(50, 50)
-		path.LineTo(150, 50)
-		path.LineTo(100, 150)
-		path.Close() // Close the path to form a complete shape
-		cs := ebiten.ColorScale{}
-		cs.Scale(1, 0.5, 1, 1)
-
-		img := g.player.Img
-
-		var options ebiten.DrawImageOptions
-		options.GeoM.Translate(g.player.Pos.X, g.player.Pos.Y)
-		screen.DrawImage(img, &options)
-
-		vector.FillPath(screen, path, &vector.FillOptions{FillRule: vector.FillRuleEvenOdd}, &vector.DrawPathOptions{AntiAlias: true,
-			ColorScale: cs})
-	*/
 }
 
 func (g *BirdGame) Layout(w, h int) (int, int) {

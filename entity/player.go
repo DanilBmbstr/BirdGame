@@ -32,6 +32,7 @@ package entity
 ██████████████████████████*/
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/quasilyte/gmath"
 )
@@ -87,14 +88,17 @@ func (p *Player) getFlanks(width float64) (gmath.Vec, gmath.Vec) {
 }
 
 func (p *Player) DrawEntity(screen *ebiten.Image) {
+	xOffset := camera.X_offset - camera.WindowSizeX/2
+	yOffset := camera.Y_offset - camera.WindowSizeY/2
+
 	p.PlayerTail.DrawTail(screen)
 	left, right := p.getFlanks(tailStartWidth)
 	path := &vector.Path{}
-	path.MoveTo(p.Center.AsVec32().X, p.Center.AsVec32().Y)
+	path.MoveTo(p.Center.AsVec32().X-float32(xOffset), p.Center.AsVec32().Y-float32(yOffset))
 
-	path.LineTo(right.AsVec32().X, right.AsVec32().Y)
-	path.LineTo(float32(p.PlayerTail.segments[tailStartSegmentsLenght].getSegmentEnd(p.TailSegmentLenght+tailStartLenght).X), float32(p.PlayerTail.segments[3].getSegmentEnd(p.TailSegmentLenght).Y))
-	path.LineTo(left.AsVec32().X, left.AsVec32().Y)
+	path.LineTo(right.AsVec32().X-float32(xOffset), right.AsVec32().Y-float32(yOffset))
+	path.LineTo(float32(p.PlayerTail.segments[tailStartSegmentsLenght].getSegmentEnd(p.TailSegmentLenght+tailStartLenght).X-xOffset), float32(p.PlayerTail.segments[3].getSegmentEnd(p.TailSegmentLenght).Y-yOffset))
+	path.LineTo(left.AsVec32().X-float32(xOffset), left.AsVec32().Y-float32(yOffset))
 	path.Close()
 
 	vector.FillPath(screen, path, &vector.FillOptions{FillRule: vector.FillRuleEvenOdd}, &vector.DrawPathOptions{AntiAlias: true,
@@ -103,23 +107,11 @@ func (p *Player) DrawEntity(screen *ebiten.Image) {
 	p.PlayerSprite.Position = p.Center
 	p.PlayerSprite.DrawSprite(screen)
 
-	/*
-		//Создание фигуры птицы
-		path := &vector.Path{}
+}
 
-		path.MoveTo(float32(p.Center.X)+float32(p.Direction.X*p.Lenght), float32(p.Center.Y)+float32(p.Direction.Y*p.Lenght))
-		path.LineTo(float32(p.Center.X)+float32(p.Direction.X*p.Lenght-0.022871), float32(p.Center.Y)+float32(p.Direction.Y*p.Lenght+0.930223))
-		path.LineTo(float32(p.Center.X)+float32(p.Direction.X*p.Lenght-0.305671), float32(p.Center.Y)+float32(p.Direction.Y*p.Lenght+0.706639))
-		path.LineTo(float32(p.Center.X)+float32(p.Direction.X*p.Lenght-0.230515), float32(p.Center.Y)+float32(p.Direction.Y*p.Lenght+0.679934))
-		leftFlank, rightFlank := p.PlayerTail.segments[0].getSegmentFlanks()
-		path.LineTo(leftFlank.AsVec32().X, leftFlank.AsVec32().Y)
-		path.LineTo(rightFlank.AsVec32().X, rightFlank.AsVec32().Y)
-		path.Close()
-		cs := ebiten.ColorScale{}
-		cs.Scale(1, 1, 1, 1)
-		vector.FillPath(screen, path, &vector.FillOptions{FillRule: vector.FillRuleEvenOdd}, &vector.DrawPathOptions{AntiAlias: true,
-			ColorScale: cs})
-	*/
+func (p *Player) Rotate(dest gmath.Vec, speed float64) {
+
+	p.Direction = p.Direction.LinearInterpolate(gmath.Vec{camera.WindowSizeX / 2, camera.WindowSizeY / 2}.DirectionTo(dest), speed)
 
 }
 
