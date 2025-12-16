@@ -51,7 +51,7 @@ type BirdGame struct {
 func (g *BirdGame) init() {
 	g.loader = assets.CreateLoader()
 	//imgA := g.loader.LoadImage(assets.ImageA).Data
-	g.player = &entity.Player{TailLenght: 50, Speed: 2}
+	g.player = &entity.Player{TailLenght: 50, Speed: 4}
 	img := g.loader.LoadImage(assets.Bird).Data
 	g.player.PlayerSprite.SetImage(img)
 	g.player.PlayerSprite.SetScale(0.1)
@@ -66,7 +66,7 @@ func (g *BirdGame) init() {
 
 	g.player.SetDirection(1, 1)
 	g.player.Lenght = 100
-	g.player.PlayerTail.MovingSpeed = 2
+	g.player.PlayerTail.MovingSpeed = 4
 	g.player.PlayerTail.RotationSpeed = 0.25
 
 	g.inputSystem.Init(input.SystemConfig{

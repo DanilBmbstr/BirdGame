@@ -34,8 +34,8 @@ type Tail struct {
 
 func (ts *tailSegment) getSegmentFlanks() (gmath.Vec, gmath.Vec) {
 
-	left := ts.start.Add(ts.direction.Rotated(gmath.DegToRad(-90)).Mulf(float64(ts.segmentWidht)))
-	right := ts.start.Add(ts.direction.Rotated(gmath.DegToRad(90)).Mulf(float64(ts.segmentWidht)))
+	left := ts.start.Add(ts.direction.Normalized().Rotated(gmath.DegToRad(-90)).Mulf(float64(ts.segmentWidht)))
+	right := ts.start.Add(ts.direction.Normalized().Rotated(gmath.DegToRad(90)).Mulf(float64(ts.segmentWidht)))
 
 	return left, right
 }

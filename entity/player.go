@@ -40,8 +40,8 @@ import (
 )
 
 const (
-	tailStartLenght         = 10
-	tailStartSegmentsLenght = 3
+	tailStartLenght         = 0
+	tailStartSegmentsLenght = 1
 
 	tailStartWidth  = 15
 	tailWidth       = 9
@@ -99,7 +99,7 @@ func (p *Player) DrawEntity(screen *ebiten.Image) {
 	path.MoveTo(p.Center.AsVec32().X-float32(xOffset), p.Center.AsVec32().Y-float32(yOffset))
 
 	path.LineTo(right.AsVec32().X-float32(xOffset), right.AsVec32().Y-float32(yOffset))
-	path.LineTo(float32(p.PlayerTail.segments[tailStartSegmentsLenght].getSegmentEnd(p.TailSegmentLenght+tailStartLenght).X-xOffset), float32(p.PlayerTail.segments[3].getSegmentEnd(p.TailSegmentLenght).Y-yOffset))
+	path.LineTo(float32(p.PlayerTail.segments[tailStartSegmentsLenght+1].start.X-xOffset), float32(p.PlayerTail.segments[tailStartSegmentsLenght+1].start.Y-yOffset))
 	path.LineTo(left.AsVec32().X-float32(xOffset), left.AsVec32().Y-float32(yOffset))
 	path.Close()
 
@@ -108,6 +108,7 @@ func (p *Player) DrawEntity(screen *ebiten.Image) {
 
 	path.MoveTo(right.AsVec32().X-float32(xOffset), right.AsVec32().Y-float32(yOffset))
 	sLeft, sRight := p.PlayerTail.segments[0].getSegmentFlanks()
+
 	path.LineTo(float32(sRight.X)-float32(xOffset), float32(sRight.Y-yOffset))
 	path.LineTo(float32(sLeft.X)-float32(xOffset), float32(sLeft.Y-yOffset))
 	path.LineTo(left.AsVec32().X-float32(xOffset), left.AsVec32().Y-float32(yOffset))
@@ -133,7 +134,7 @@ func (p *Player) Rotate(dest gmath.Vec, speed float64) {
 	if windowCenter.DistanceTo(dest) < 10 {
 		return
 	}
-	if (math.Abs(float64(rotationVector.Angle() - p.Direction.Angle()))) < float64(gmath.DegToRad(90)) {
+	if (math.Abs(float64(rotationVector.Angle()-p.Direction.Angle()))) < float64(gmath.DegToRad(90)) || (math.Abs(float64(rotationVector.Angle()-p.Direction.Angle()))) > float64(gmath.DegToRad(300)) {
 		dir := p.Direction.LinearInterpolate(rotationVector, speed)
 
 		p.Direction = dir

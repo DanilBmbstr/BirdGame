@@ -22,7 +22,7 @@ func (s *Shape) DrawEntity(screen *ebiten.Image) {
 
 	path.Close()
 	cs := ebiten.ColorScale{}
-	cs.Scale(0, 1, 0, 1)
+	cs.Scale(0.25, 0.25, 0.5, 1)
 	vector.FillPath(screen, path, &vector.FillOptions{FillRule: vector.FillRuleEvenOdd}, &vector.DrawPathOptions{AntiAlias: true,
 		ColorScale: cs})
 }
