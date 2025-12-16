@@ -58,6 +58,9 @@ func (g *BirdGame) init() {
 	g.player.PlayerSprite.Origin = g.player.PlayerSprite.GetImageSize().Mulf(0.5).Add(gmath.Vec{X: 0, Y: -8})
 	g.player.TailSegmentLenght = 5
 
+	cs := ebiten.ColorScale{}
+	cs.Scale(0.5, 0.5, 0.5, 0.5)
+	g.player.TailColor = cs
 	//При инициализации игрока создаётся хвост, необходимо выставить параметры влияющие на его создание до вызова InitPlayer
 	g.player.InitPlayer(250, 250)
 

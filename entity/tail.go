@@ -63,7 +63,7 @@ func (t *Tail) CreateTail(point gmath.Vec, max int) {
 	}
 }
 
-func (t *Tail) DrawTail(screen *ebiten.Image) {
+func (t *Tail) DrawTail(screen *ebiten.Image, cs ebiten.ColorScale) {
 	xOffset := camera.X_offset - camera.WindowSizeX/2
 	yOffset := camera.Y_offset - camera.WindowSizeY/2
 	path := &vector.Path{}
@@ -80,8 +80,6 @@ func (t *Tail) DrawTail(screen *ebiten.Image) {
 
 	}
 
-	cs := ebiten.ColorScale{}
-	cs.Scale(0.5, 0.5, 0.5, 0.5)
 	vector.FillPath(screen, path, &vector.FillOptions{FillRule: vector.FillRuleEvenOdd}, &vector.DrawPathOptions{AntiAlias: true,
 		ColorScale: cs})
 }
