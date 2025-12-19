@@ -29,6 +29,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
 	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/optionsLoaders"
+
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	input "github.com/quasilyte/ebitengine-input"
 	resource "github.com/quasilyte/ebitengine-resource"
@@ -49,26 +51,15 @@ type BirdGame struct {
 }
 
 func (g *BirdGame) init() {
+
 	g.loader = assets.CreateLoader()
-	//imgA := g.loader.LoadImage(assets.ImageA).Data
-	g.player = &entity.Player{TailLenght: 50, Speed: 4}
+
+	g.player = &entity.Player{}
 	img := g.loader.LoadImage(assets.Bird).Data
-	g.player.PlayerSprite.SetImage(img)
-	g.player.PlayerSprite.SetScale(0.1)
-	g.player.PlayerSprite.Origin = g.player.PlayerSprite.GetImageSize().Mulf(0.5).Add(gmath.Vec{X: 0, Y: -8})
-	g.player.TailSegmentLenght = 5
-
-	cs := ebiten.ColorScale{}
-	cs.Scale(0.5, 0.5, 0.5, 0.5)
-	g.player.TailColor = cs
-	//При инициализации игрока создаётся хвост, необходимо выставить параметры влияющие на его создание до вызова InitPlayer
-	g.player.InitPlayer(250, 250)
-
-	g.player.SetDirection(1, 1)
-	g.player.Lenght = 100
-	g.player.PlayerTail.MovingSpeed = 4
-	g.player.PlayerTail.RotationSpeed = 0.25
-
+	g.player.GetSprite().SetImage(img)
+	playerDTO := optionsLoaders.LoadPlayer(g.loader)
+	g.player.InitPlayer(250, 250, playerDTO)
+	g.player.GetSprite().Origin = g.player.GetSprite().GetImageSize().Mulf(0.5).Add(gmath.Vec{X: 0, Y: -8})
 	g.inputSystem.Init(input.SystemConfig{
 		DevicesEnabled: input.AnyDevice,
 	})
@@ -83,8 +74,8 @@ func (g *BirdGame) init() {
 
 func (g *BirdGame) Update() error {
 	//Обновляем камеру
-	camera.X_offset = g.player.Center.X
-	camera.Y_offset = g.player.Center.Y
+	camera.X_offset = g.player.GetPosition().X
+	camera.Y_offset = g.player.GetPosition().Y
 	camera.WindowSizeX = float64(g.windowWidth)
 	camera.WindowSizeY = float64(g.windowHeight)
 	//
@@ -93,10 +84,10 @@ func (g *BirdGame) Update() error {
 
 	MousePosition := gmath.Vec{X: float64(x), Y: float64(y)}
 
-	g.player.Rotate(MousePosition, 0.1)
+	g.player.Controller.Rotate(g.player, MousePosition)
 
-	g.player.MoveForward()
-	debugCollisions = collisionsystem.CheckCollisionWithShape(g.player.Center, g.testShape)
+	g.player.Controller.MoveForward(g.player)
+	debugCollisions = collisionsystem.CheckCollisionWithShape(g.player.GetPosition(), g.testShape)
 	return nil
 }
 

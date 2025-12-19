@@ -56,4 +56,5 @@ func CreateLoader() *resource.Loader {
 
 func RegisterResources(loader *resource.Loader) {
 	registerImageResources(loader)
+	RegisterJsonResources(loader)
 }

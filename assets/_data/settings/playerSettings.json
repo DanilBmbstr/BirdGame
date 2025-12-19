@@ -1,0 +1,18 @@
+
+{
+    "Lenght": 100,
+    "TailColor":[0.5,0.5,0.5,0.5],
+    "TailLenght":50,
+    "TailSegmentLenght":5,
+    "PlayerColor":[1,1,1,1],
+    "Speed":4,
+    "RotationSpeed":0.1,
+    "TailMovingSpeed":4,
+    "TailRotationSpeed":0.25,
+    "TailStartWidth":15,
+    "TailWidth":9,
+    "TailWidthNarrow":0.95,
+    "SpriteScale": 0.1,
+    "SpriteOrigin": [0,-8]
+
+}
