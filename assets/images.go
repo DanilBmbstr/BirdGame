@@ -28,8 +28,7 @@ const (
 
 func registerImageResources(loader *resource.Loader) {
 	imageResources := map[resource.ImageID]resource.ImageInfo{
-		ImageA: {Path: "a.png"},
-		Bird:   {Path: "bird_4.png"},
+		Bird: {Path: "images/bird_4.png"},
 	}
 
 	for id, res := range imageResources {

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Shape>
+    <Point>
+        <X>500</X>
+        <Y>500</Y>
+    </Point>
+    <Point>
+        <X>300</X>
+        <Y>750</Y>
+    </Point>
+    <Point>
+        <X>450</X>
+        <Y>850</Y>
+    </Point>
+    <Point>
+        <X>700</X>
+        <Y>700</Y>
+    </Point>
+    
+</Shape>
+
+<Shape>
+    <Point>
+        <X>1000</X>
+        <Y>1000</Y>
+    </Point>
+    <Point>
+        <X>800</X>
+        <Y>1250</Y>
+    </Point>
+    <Point>
+        <X>950</X>
+        <Y>1350</Y>
+    </Point>
+    <Point>
+        <X>1200</X>
+        <Y>1200</Y>
+    </Point>
+    
+</Shape>

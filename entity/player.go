@@ -39,13 +39,16 @@ import (
 	"github.com/quasilyte/gmath"
 )
 
+/*
 const (
+
 	tailStartSegmentsLenght = 1
 	tailStartWidth          = 15
 	tailWidth               = 9
 	tailWidthNarrow         = 0.95
-)
 
+)
+*/
 type Player struct {
 	playerSprite Sprite
 	center       gmath.Vec
@@ -64,9 +67,9 @@ type Player struct {
 	//Константы
 
 	tailStartSegmentsLenght int
-	tailStartWidth          float64
-	tailWidth               float64
-	tailWidthNarrow         float64
+	tailStartWidth          float32
+	tailWidth               float32
+	tailWidthNarrow         float32
 }
 
 func (p *Player) GetSprite() *Sprite {
@@ -94,7 +97,7 @@ func (p *Player) InitPlayer(xPos, yPos float64, dto optionsLoaders.PlayerDTO) {
 	p.tailWidth = dto.TailWidth
 	p.tailWidthNarrow = dto.TailWidthNarrow
 
-	t := Tail{tailWidth: tailWidth, widthNarrow: tailWidthNarrow}
+	t := Tail{tailWidth: p.tailWidth, widthNarrow: p.tailWidthNarrow}
 	p.playerTail = &t
 	p.playerTail.SegmentLenght = p.tailSegmentLenght
 	p.playerTail.CreateTail(p.center, p.tailLenght)
@@ -131,12 +134,12 @@ func (p *Player) DrawEntity(screen *ebiten.Image) {
 	yOffset := camera.Y_offset - camera.WindowSizeY/2
 
 	p.playerTail.DrawTail(screen, p.tailColor)
-	left, right := p.getFlanks(tailStartWidth)
+	left, right := p.getFlanks(float64(p.tailStartWidth))
 	path := &vector.Path{}
 	path.MoveTo(p.center.AsVec32().X-float32(xOffset), p.center.AsVec32().Y-float32(yOffset))
 
 	path.LineTo(right.AsVec32().X-float32(xOffset), right.AsVec32().Y-float32(yOffset))
-	path.LineTo(float32(p.playerTail.segments[tailStartSegmentsLenght+1].start.X-xOffset), float32(p.playerTail.segments[tailStartSegmentsLenght+1].start.Y-yOffset))
+	path.LineTo(float32(p.playerTail.segments[p.tailStartSegmentsLenght+1].start.X-xOffset), float32(p.playerTail.segments[p.tailStartSegmentsLenght+1].start.Y-yOffset))
 	path.LineTo(left.AsVec32().X-float32(xOffset), left.AsVec32().Y-float32(yOffset))
 	path.Close()
 

@@ -27,8 +27,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
-	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/level"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/optionsLoaders"
 
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -40,20 +40,20 @@ import (
 var debugCollisions bool
 
 type BirdGame struct {
-	windowWidth  int
-	windowHeight int
-	loader       *resource.Loader
-	player       *entity.Player
-
-	inputSystem input.System
-	handler     *input.Handler
-	testShape   collisionsystem.Shape
+	windowWidth     int
+	windowHeight    int
+	loader          *resource.Loader
+	player          *entity.Player
+	loadedLocations [2]level.Location
+	inputSystem     input.System
+	handler         *input.Handler
 }
 
 func (g *BirdGame) init() {
 
 	g.loader = assets.CreateLoader()
 
+	//Инициализация игрока
 	g.player = &entity.Player{}
 	img := g.loader.LoadImage(assets.Bird).Data
 	g.player.GetSprite().SetImage(img)
@@ -63,12 +63,11 @@ func (g *BirdGame) init() {
 	g.inputSystem.Init(input.SystemConfig{
 		DevicesEnabled: input.AnyDevice,
 	})
-	g.handler = g.inputSystem.NewHandler(0, input.Keymap{})
+	//////////////////////////
 
-	g.testShape.Points = append(g.testShape.Points, gmath.Vec{X: 500, Y: 500})
-	g.testShape.Points = append(g.testShape.Points, gmath.Vec{X: 300, Y: 750})
-	g.testShape.Points = append(g.testShape.Points, gmath.Vec{X: 450, Y: 850})
-	g.testShape.Points = append(g.testShape.Points, gmath.Vec{X: 700, Y: 700})
+	g.loadedLocations[0].LoadLocation(g.loader.LoadRaw(assets.Test_level))
+	g.loadedLocations[1].LoadLocation(g.loader.LoadRaw(assets.Test_level2))
+	g.handler = g.inputSystem.NewHandler(0, input.Keymap{})
 
 }
 
@@ -87,13 +86,22 @@ func (g *BirdGame) Update() error {
 	g.player.Controller.Rotate(g.player, MousePosition)
 
 	g.player.Controller.MoveForward(g.player)
-	debugCollisions = collisionsystem.CheckCollisionWithShape(g.player.GetPosition(), g.testShape)
+
+	for i := 0; i < len(g.loadedLocations); i++ {
+		debugCollisions = g.loadedLocations[i].CheckCollisions(g.player.GetPosition())
+		if debugCollisions {
+			break
+		}
+	}
+
 	return nil
 }
 
 func (g *BirdGame) Draw(screen *ebiten.Image) {
 
-	g.testShape.DrawEntity(screen)
+	for i := 0; i < len(g.loadedLocations); i++ {
+		g.loadedLocations[i].DrawLocation(screen)
+	}
 
 	g.player.DrawEntity(screen)
 

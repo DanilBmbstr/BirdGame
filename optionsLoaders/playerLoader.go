@@ -29,9 +29,9 @@ type PlayerDTO struct {
 	//Константы
 
 	TailStartSegmentsLenght int
-	TailStartWidth          float64
-	TailWidth               float64
-	TailWidthNarrow         float64
+	TailStartWidth          float32
+	TailWidth               float32
+	TailWidthNarrow         float32
 
 	SpriteScale  float64
 	SpriteOrigin [2]float64

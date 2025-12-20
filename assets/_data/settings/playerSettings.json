@@ -1,9 +1,9 @@
 
 {
-    "Lenght": 100,
+    "Lenght": 1,
     "TailColor":[0.5,0.5,0.5,0.5],
     "TailLenght":50,
-    "TailSegmentLenght":5,
+    "TailSegmentLenght":1,
     "PlayerColor":[1,1,1,1],
     "Speed":4,
     "RotationSpeed":0.1,
