@@ -44,17 +44,18 @@ import (
 )
 
 const (
-	windowHeingtMin = 1000
-	windowWidthMin  = 1000
+	layoutWidth     = 1920
+	layoutHeight    = 1200
+	windowWidthMin  = layoutWidth / 2
+	windowHeingtMin = layoutHeight / 2
 )
 
 var (
 	debugMode       = false
 	debugCollisions bool
-	windowWidth     int
-	windowHeight    int
-	playerDTO       optionsLoaders.PlayerDTO
-	levelScale      float64 = 0.7
+
+	playerDTO  optionsLoaders.PlayerDTO
+	levelScale float64 = 0.7
 )
 
 type BirdGame struct {
@@ -71,13 +72,10 @@ func switchFullscreenMode(g *BirdGame) {
 	if inputEvents.OnKeyPressed(ebiten.KeyAlt) {
 		if !ebiten.IsFullscreen() {
 			ebiten.SetFullscreen(true)
-			mx, my := ebiten.Monitor().Size()
-			windowWidth = mx
-			windowHeight = my
+
 		} else {
 			ebiten.SetFullscreen(false)
-			windowWidth = windowHeingtMin
-			windowHeight = windowHeingtMin
+
 		}
 	}
 
@@ -117,8 +115,8 @@ func (g *BirdGame) Update() error {
 	//Обновляем камеру
 	camera.X_offset = g.player.GetPosition().X
 	camera.Y_offset = g.player.GetPosition().Y
-	camera.WindowSizeX = float64(windowWidth)
-	camera.WindowSizeY = float64(windowHeight)
+	camera.WindowSizeX = float64(layoutWidth)
+	camera.WindowSizeY = float64(layoutHeight)
 	//
 
 	x, y := ebiten.CursorPosition()
@@ -157,7 +155,6 @@ func (g *BirdGame) Draw(screen *ebiten.Image) {
 			g.loadedLocations[i].DrawLCollisionMask(screen)
 		}
 	}
-
 	g.player.DrawEntity(screen)
 	g.test_enemy.Parent.DrawEntity(screen)
 	ebitenutil.DebugPrint(screen, strconv.FormatFloat(ebiten.ActualFPS(), 'f', 6, 64)+"\n"+strconv.FormatBool(debugCollisions))
@@ -166,17 +163,16 @@ func (g *BirdGame) Draw(screen *ebiten.Image) {
 
 func (g *BirdGame) Layout(w, h int) (int, int) {
 
-	return windowWidth, windowHeight
+	return layoutWidth, layoutHeight
 }
 
 func main() {
 
 	g := &BirdGame{}
-	windowHeight = windowHeingtMin
-	windowWidth = windowWidthMin
+
 	g.init()
 
-	ebiten.SetWindowSize(windowWidth, windowHeight)
+	ebiten.SetWindowSize(windowWidthMin, windowHeingtMin)
 	ebiten.SetWindowTitle("Ebitengine")
 
 	if err := ebiten.RunGame(g); err != nil {

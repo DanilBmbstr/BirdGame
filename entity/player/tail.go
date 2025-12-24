@@ -12,6 +12,8 @@ package player
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
+	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/level"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/quasilyte/gmath"
 )
@@ -32,11 +34,25 @@ type Tail struct {
 	movingSpeed   float64
 }
 
-/*func (ts *tailSegment) GetCollider() *collisionsystem.Shape {
-shape := collisionsystem.Shape{}
+func (t *Tail) GetCollider() *level.CollisionMask {
 
-shape.Points = append(shape.Points, ts.getSegmentFlanks())
-}*/
+	mask := *&level.CollisionMask{}
+	mask.SetInfo(1, gmath.Vec{X: 0, Y: 0})
+	for i := 0; i < len(t.segments)-1; i++ {
+
+		shape := collisionsystem.Shape{}
+		left, right := t.segments[i].getSegmentFlanks()
+		left2, right2 := t.segments[i+1].getSegmentFlanks()
+		shape.Points = append(shape.Points, right)
+		shape.Points = append(shape.Points, left)
+		shape.Points = append(shape.Points, left2)
+		shape.Points = append(shape.Points, right2)
+
+		mask.AddShape(shape)
+	}
+	return &mask
+
+}
 
 func (ts *tailSegment) getSegmentFlanks() (gmath.Vec, gmath.Vec) {
 

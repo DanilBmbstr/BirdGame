@@ -21,6 +21,15 @@ type CollisionMask struct {
 	scale float64
 }
 
+func (cm *CollisionMask) SetInfo(scale float64, offset gmath.Vec) {
+	cm.info.scale = scale
+	cm.info.offset = offset
+}
+
+func (cm *CollisionMask) AddShape(shape collisionsystem.Shape) {
+	cm.shapes = append(cm.shapes, shape)
+}
+
 func (l *CollisionMask) LoadLocation(data resource.Raw, scale float64) {
 	l.scale = scale
 	xmlData := bytes.NewBufferString(string(data.Data))
