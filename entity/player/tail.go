@@ -33,7 +33,9 @@ type Tail struct {
 }
 
 /*func (ts *tailSegment) GetCollider() *collisionsystem.Shape {
+shape := collisionsystem.Shape{}
 
+shape.Points = append(shape.Points, ts.getSegmentFlanks())
 }*/
 
 func (ts *tailSegment) getSegmentFlanks() (gmath.Vec, gmath.Vec) {

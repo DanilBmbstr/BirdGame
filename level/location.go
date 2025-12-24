@@ -14,14 +14,14 @@ type locationInfo struct {
 	scale  float64
 	offset gmath.Vec
 }
-type Location struct {
+type CollisionMask struct {
 	info   locationInfo
 	shapes []collisionsystem.Shape
 
 	scale float64
 }
 
-func (l *Location) LoadLocation(data resource.Raw, scale float64) {
+func (l *CollisionMask) LoadLocation(data resource.Raw, scale float64) {
 	l.scale = scale
 	xmlData := bytes.NewBufferString(string(data.Data))
 	d := xml.NewDecoder(xmlData)
@@ -53,13 +53,13 @@ func (l *Location) LoadLocation(data resource.Raw, scale float64) {
 	}
 }
 
-func (l *Location) DrawLocation(screen *ebiten.Image) {
+func (l *CollisionMask) DrawLCollisionMask(screen *ebiten.Image) {
 	for i := 0; i < len(l.shapes); i++ {
 		l.shapes[i].DrawEntity(screen)
 	}
 }
 
-func (l *Location) CheckCollisions(point gmath.Vec) bool {
+func (l *CollisionMask) CheckCollisions(point gmath.Vec) bool {
 	for i := 0; i < len(l.shapes); i++ {
 		if collisionsystem.CheckCollisionWithShape(point, l.shapes[i]) {
 			return true
@@ -69,7 +69,7 @@ func (l *Location) CheckCollisions(point gmath.Vec) bool {
 }
 
 // DebugTools
-func (l *Location) DebugMoveCollisions() {
+func (l *CollisionMask) DebugMoveCollisions() {
 	speed := 0.5
 	if ebiten.IsKeyPressed(ebiten.KeyW) {
 		l.info.offset.Y -= speed

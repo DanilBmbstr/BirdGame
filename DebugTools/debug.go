@@ -6,7 +6,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/level"
 )
 
-func Debug(player *player.Player, location level.Location) {
+func Debug(player *player.Player, location level.CollisionMask) {
 	location.DebugMoveCollisions()
 	if ebiten.IsKeyPressed(ebiten.KeyControl) {
 		player.Controller.MoveForward(player)

@@ -61,7 +61,7 @@ type BirdGame struct {
 	loader          *resource.Loader
 	player          *player.Player
 	test_enemy      enemy.BasicFox
-	loadedLocations [2]level.Location
+	loadedLocations [2]level.CollisionMask
 
 	handler *input.Handler
 }
@@ -154,7 +154,7 @@ func (g *BirdGame) Draw(screen *ebiten.Image) {
 	screen.DrawImage(g.loader.LoadImage(assets.Back).Data, &imageOptions)
 	if debugMode {
 		for i := 0; i < len(g.loadedLocations); i++ {
-			g.loadedLocations[i].DrawLocation(screen)
+			g.loadedLocations[i].DrawLCollisionMask(screen)
 		}
 	}
 
