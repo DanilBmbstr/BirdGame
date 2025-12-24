@@ -17,6 +17,8 @@ package entity
 ⣿⣿⣿⣿⣷⡄⠄⠄⠄⠄⠄⠄⠛⠛⠂⠄⠄⠄⠄⠄⠴⢿⣿⣿⣿⣿⣿⣿⣿⣿
 ⣿⣿⣿⣿⣿⣿⣿⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿*/
 import (
+	"fmt"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
 	"github.com/quasilyte/gmath"
@@ -25,7 +27,7 @@ import (
 type Sprite struct {
 	spriteImage *ebiten.Image
 	scale       float64
-	Origin      gmath.Vec
+	origin      gmath.Vec
 	Position    gmath.Vec
 	Rotation    gmath.Rad
 	imageSize   gmath.Vec
@@ -34,7 +36,7 @@ type Sprite struct {
 func (s *Sprite) DrawSprite(screen *ebiten.Image) {
 	xOffset := camera.X_offset - camera.WindowSizeX/2
 	yOffset := camera.Y_offset - camera.WindowSizeY/2
-	rotationOffset := s.Origin.Rotated(s.Rotation)
+	rotationOffset := s.origin.Rotated(s.Rotation)
 
 	imageOptions := ebiten.DrawImageOptions{}
 
@@ -50,7 +52,7 @@ func (s *Sprite) DrawSprite(screen *ebiten.Image) {
 func (s *Sprite) SetImage(img *ebiten.Image) {
 	s.imageSize = gmath.Vec{X: float64(img.Bounds().Max.X), Y: float64(img.Bounds().Max.Y)}
 	s.scale = 1
-	s.Origin = gmath.Vec{X: 0, Y: 0}
+	s.origin = gmath.Vec{X: 0, Y: 0}
 	s.Rotation = 0
 	s.spriteImage = img
 }
@@ -69,4 +71,25 @@ func (s *Sprite) GetScale() float64 {
 
 func (s *Sprite) GetImageSize() gmath.Vec {
 	return s.imageSize.Mulf(s.scale)
+}
+
+func (s *Sprite) GetOrigin() gmath.Vec {
+	return s.origin
+}
+
+func (s *Sprite) SetOrigin(pos gmath.Vec) {
+	s.origin = pos
+}
+
+func (s *Sprite) SetOriginAtCenter() error {
+	if s.spriteImage == nil {
+		return fmt.Errorf("Sprite image is not set")
+	}
+	s.origin = s.GetImageSize().Mulf(0.5)
+	return nil
+
+}
+
+func (s *Sprite) MoveOrigin(vec gmath.Vec) {
+	s.origin = s.origin.Add(vec)
 }

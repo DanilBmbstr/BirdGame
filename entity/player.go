@@ -76,8 +76,13 @@ func (p *Player) GetSprite() *Sprite {
 	return &p.playerSprite
 }
 
+func (p *Player) SetSprite(s Sprite) {
+	p.playerSprite = s
+}
+
 func (p *Player) InitPlayer(xPos, yPos float64, dto optionsLoaders.PlayerDTO) {
 
+	p.direction = gmath.Vec{X: 1, Y: 1}
 	p.SetPosition(xPos, yPos)
 
 	//Инициализируем цвета
@@ -89,7 +94,7 @@ func (p *Player) InitPlayer(xPos, yPos float64, dto optionsLoaders.PlayerDTO) {
 	playerColor.Scale(dto.PlayerColor[0], dto.PlayerColor[1], dto.PlayerColor[2], dto.PlayerColor[3])
 	p.playerColor = playerColor
 	p.playerSprite.scale = dto.SpriteScale
-	p.playerSprite.Origin = gmath.Vec{X: dto.SpriteOrigin[0], Y: dto.SpriteOrigin[1]}
+
 	p.tailLenght = dto.TailLenght
 	p.tailSegmentLenght = dto.TailSegmentLenght
 	p.tailStartSegmentsLenght = dto.TailStartSegmentsLenght
@@ -104,6 +109,9 @@ func (p *Player) InitPlayer(xPos, yPos float64, dto optionsLoaders.PlayerDTO) {
 	p.playerTail.MovingSpeed = dto.TailMovingSpeed
 	p.playerTail.RotationSpeed = dto.TailRotationSpeed
 	p.Controller = PlayerController{Speed: dto.Speed, RotationSpeed: dto.RotationSpeed}
+
+	p.playerSprite.SetOriginAtCenter()
+	p.playerSprite.MoveOrigin(gmath.Vec{X: 0, Y: -8})
 
 }
 

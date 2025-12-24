@@ -1,6 +1,7 @@
 package main
 
 /*
+/*
 ░░░░░░░░░░░░░░░░░░▄▄░░░░░░░░░░░░░░░░░░
 ░░░░░░░░░░░░░░░░░▄██▄░░░░░░░░░░░░░░░░░
 ░░░░░░░░░░░░░░░░▄████▄░░░░░░░░░░░░░░░░
@@ -22,31 +23,42 @@ package main
 ░▀█▄▄██░▀█▄▄██░██░▀█▄▄███░▀█▄▄██░█▄▄█▀*/
 
 import (
+	"os"
 	"strconv"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	debugtools "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/DebugTools"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/inputEvents"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/level"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/optionsLoaders"
-
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+
 	input "github.com/quasilyte/ebitengine-input"
 	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/gmath"
 )
 
+const (
+	windowHeingtMin = 1000
+	windowWidthMin  = 1000
+)
+
 var (
+	debugMode       = false
 	debugCollisions bool
 	windowWidth     int
 	windowHeight    int
+	playerDTO       optionsLoaders.PlayerDTO
+	levelScale      float64 = 0.7
 )
 
 type BirdGame struct {
 	loader          *resource.Loader
 	player          *entity.Player
+	test_enemy      entity.BasicFox
 	loadedLocations [2]level.Location
 
 	handler *input.Handler
@@ -62,14 +74,21 @@ func switchFullscreenMode(g *BirdGame) {
 			windowHeight = my
 		} else {
 			ebiten.SetFullscreen(false)
-			windowWidth = 1000
-			windowHeight = 1000
+			windowWidth = windowHeingtMin
+			windowHeight = windowHeingtMin
 		}
 	}
 
 }
 
 func (g *BirdGame) init() {
+	ebiten.SetScreenClearedEveryFrame(false)
+	ebiten.SetVsyncEnabled(true)
+
+	if len(os.Args) > 1 && os.Args[1] == "debug" {
+		debugMode = true
+	}
+
 	inputEvents.InitInputEvents()
 	g.loader = assets.CreateLoader()
 
@@ -77,13 +96,15 @@ func (g *BirdGame) init() {
 	g.player = &entity.Player{}
 	img := g.loader.LoadImage(assets.Bird).Data
 	g.player.GetSprite().SetImage(img)
-	playerDTO := optionsLoaders.LoadPlayer(g.loader)
-	g.player.InitPlayer(250, 250, playerDTO)
-	g.player.GetSprite().Origin = g.player.GetSprite().GetImageSize().Mulf(0.5).Add(gmath.Vec{X: 0, Y: -8})
+	playerDTO = optionsLoaders.LoadPlayer(g.loader)
+	g.player.InitPlayer(1000, 1500, playerDTO)
+
 	//////////////////////////
 
-	g.loadedLocations[0].LoadLocation(g.loader.LoadRaw(assets.Test_level))
-	g.loadedLocations[1].LoadLocation(g.loader.LoadRaw(assets.Test_level2))
+	g.loadedLocations[0].LoadLocation(g.loader.LoadRaw(assets.Test_level), levelScale)
+	g.loadedLocations[1].LoadLocation(g.loader.LoadRaw(assets.Test_level2), levelScale)
+
+	g.test_enemy.Init(1000, 1000, g.loader.LoadImage(assets.BasicFox).Data)
 
 }
 
@@ -103,27 +124,40 @@ func (g *BirdGame) Update() error {
 	MousePosition := gmath.Vec{X: float64(x), Y: float64(y)}
 
 	g.player.Controller.Rotate(g.player, MousePosition)
-
-	g.player.Controller.MoveForward(g.player)
+	if debugMode {
+		debugtools.Debug(g.player, g.loadedLocations[0])
+	} else {
+		g.player.Controller.MoveForward(g.player)
+	}
 
 	for i := 0; i < len(g.loadedLocations); i++ {
 		debugCollisions = g.loadedLocations[i].CheckCollisions(g.player.GetPosition())
 		if debugCollisions {
-			break
+			g.player.InitPlayer(1000, 1500, playerDTO)
 		}
 	}
+
+	g.test_enemy.Move(g.player.GetPosition())
+
 	inputEvents.UpdateInputEvents()
 	return nil
 }
 
 func (g *BirdGame) Draw(screen *ebiten.Image) {
 
-	for i := 0; i < len(g.loadedLocations); i++ {
-		g.loadedLocations[i].DrawLocation(screen)
+	imageOptions := ebiten.DrawImageOptions{}
+	imageOptions.GeoM.Scale(levelScale, levelScale)
+	imageOptions.GeoM.Translate(-(camera.X_offset - camera.WindowSizeX/2), -(camera.Y_offset - camera.WindowSizeY/2))
+
+	screen.DrawImage(g.loader.LoadImage(assets.Back).Data, &imageOptions)
+	if debugMode {
+		for i := 0; i < len(g.loadedLocations); i++ {
+			g.loadedLocations[i].DrawLocation(screen)
+		}
 	}
 
 	g.player.DrawEntity(screen)
-
+	g.test_enemy.Parent.DrawEntity(screen)
 	ebitenutil.DebugPrint(screen, strconv.FormatFloat(ebiten.ActualFPS(), 'f', 6, 64)+"\n"+strconv.FormatBool(debugCollisions))
 
 }
@@ -136,8 +170,8 @@ func (g *BirdGame) Layout(w, h int) (int, int) {
 func main() {
 
 	g := &BirdGame{}
-	windowHeight = 1000
-	windowWidth = 1000
+	windowHeight = windowHeingtMin
+	windowWidth = windowWidthMin
 	g.init()
 
 	ebiten.SetWindowSize(windowWidth, windowHeight)

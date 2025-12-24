@@ -19,22 +19,23 @@ package entity
 
 */
 import (
-	"image/color"
+	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/quasilyte/gmath"
 )
 
 type Enemy struct {
+	sprite     Sprite
 	Center     gmath.Vec
 	Direction  gmath.Vec
 	Lenght     float64
 	PlayerTail *Tail
 }
 
-func (e *Enemy) Init(x, y float64) {
+func (e *Enemy) Init(x, y float64, sprite Sprite) {
 	e.SetPosition(x, y)
+	e.sprite = sprite
 }
 
 func (e *Enemy) SetPosition(x, y float64) {
@@ -46,8 +47,13 @@ func (e *Enemy) MoveTowards(dest gmath.Vec, speed float64) {
 	e.Center = e.Center.Add(e.Center.DirectionTo(dest).Normalized().Mulf(speed))
 }
 
-func (e *Enemy) DrawEntity(screen *ebiten.Image) {
+func (e *Enemy) DrawEntity(screen *ebiten.Image) error {
+	if (e.Center == gmath.Vec{}) {
 
-	vector.FillCircle(screen, float32(e.Center.X), float32(e.Center.Y), 10, color.RGBA{255, 0, 0, 255}, true)
+		return fmt.Errorf("enemy position is not initialized")
+	}
 
+	e.sprite.Position = e.Center
+	e.sprite.DrawSprite(screen)
+	return nil
 }
