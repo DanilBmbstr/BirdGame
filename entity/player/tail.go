@@ -1,4 +1,4 @@
-package entity
+package player
 
 /*
 ⢠⣶⠶⢶⡆⠀⠀⠐⢶⣆⢠⣶⠆⢠⣶⠿⢷⣦⡀⢰⡆⠀⢰⣶⠀⢶⣆⢀⣶⠆
@@ -27,10 +27,14 @@ type Tail struct {
 
 	tailWidth     float32
 	widthNarrow   float32
-	SegmentLenght float64
-	RotationSpeed float64
-	MovingSpeed   float64
+	segmentLenght float64
+	rotationSpeed float64
+	movingSpeed   float64
 }
+
+/*func (ts *tailSegment) GetCollider() *collisionsystem.Shape {
+
+}*/
 
 func (ts *tailSegment) getSegmentFlanks() (gmath.Vec, gmath.Vec) {
 
@@ -42,7 +46,7 @@ func (ts *tailSegment) getSegmentFlanks() (gmath.Vec, gmath.Vec) {
 
 func (t *Tail) getSegmentEnd(segmentStart gmath.Vec) gmath.Vec {
 
-	return segmentStart.Add(gmath.Vec{X: -t.SegmentLenght, Y: 0})
+	return segmentStart.Add(gmath.Vec{X: -t.segmentLenght, Y: 0})
 }
 
 func (ts *tailSegment) getSegmentEnd(segmentLenght float64) gmath.Vec {
@@ -99,10 +103,10 @@ func (t *Tail) GetTailDistanceTo(to gmath.Vec) float64 {
 
 func (t *Tail) MoveTail(point gmath.Vec) {
 
-	t.segments[0].rotateSegment(t.getSegmentEnd(point), t.RotationSpeed)
-	t.segments[0].moveSegment(t.MovingSpeed)
+	t.segments[0].rotateSegment(t.getSegmentEnd(point), t.rotationSpeed)
+	t.segments[0].moveSegment(t.movingSpeed)
 	for i := 1; i < len(t.segments); i++ {
-		t.segments[i].rotateSegment(t.segments[i-1].getSegmentEnd(t.SegmentLenght), t.RotationSpeed)
-		t.segments[i].moveSegment(t.MovingSpeed)
+		t.segments[i].rotateSegment(t.segments[i-1].getSegmentEnd(t.segmentLenght), t.rotationSpeed)
+		t.segments[i].moveSegment(t.movingSpeed)
 	}
 }

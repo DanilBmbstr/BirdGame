@@ -1,4 +1,4 @@
-package entity
+package player
 
 /*██████████████████████████
 █░░░░░░░░█░░░░░░░█░░░░░░░█
@@ -32,25 +32,17 @@ package entity
 ██████████████████████████*/
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
+
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/optionsLoaders"
 
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/quasilyte/gmath"
 )
 
-/*
-const (
-
-	tailStartSegmentsLenght = 1
-	tailStartWidth          = 15
-	tailWidth               = 9
-	tailWidthNarrow         = 0.95
-
-)
-*/
 type Player struct {
-	playerSprite Sprite
+	playerSprite assets.Sprite
 	center       gmath.Vec
 	direction    gmath.Vec
 
@@ -72,11 +64,15 @@ type Player struct {
 	tailWidthNarrow         float32
 }
 
-func (p *Player) GetSprite() *Sprite {
+func (p *Player) GetTail() *Tail {
+	return p.playerTail
+}
+
+func (p *Player) GetSprite() *assets.Sprite {
 	return &p.playerSprite
 }
 
-func (p *Player) SetSprite(s Sprite) {
+func (p *Player) SetSprite(s assets.Sprite) {
 	p.playerSprite = s
 }
 
@@ -93,7 +89,7 @@ func (p *Player) InitPlayer(xPos, yPos float64, dto optionsLoaders.PlayerDTO) {
 	playerColor := ebiten.ColorScale{}
 	playerColor.Scale(dto.PlayerColor[0], dto.PlayerColor[1], dto.PlayerColor[2], dto.PlayerColor[3])
 	p.playerColor = playerColor
-	p.playerSprite.scale = dto.SpriteScale
+	p.playerSprite.SetScale(dto.SpriteScale)
 
 	p.tailLenght = dto.TailLenght
 	p.tailSegmentLenght = dto.TailSegmentLenght
@@ -104,10 +100,10 @@ func (p *Player) InitPlayer(xPos, yPos float64, dto optionsLoaders.PlayerDTO) {
 
 	t := Tail{tailWidth: p.tailWidth, widthNarrow: p.tailWidthNarrow}
 	p.playerTail = &t
-	p.playerTail.SegmentLenght = p.tailSegmentLenght
+	p.playerTail.segmentLenght = p.tailSegmentLenght
 	p.playerTail.CreateTail(p.center, p.tailLenght)
-	p.playerTail.MovingSpeed = dto.TailMovingSpeed
-	p.playerTail.RotationSpeed = dto.TailRotationSpeed
+	p.playerTail.movingSpeed = dto.TailMovingSpeed
+	p.playerTail.rotationSpeed = dto.TailRotationSpeed
 	p.Controller = PlayerController{Speed: dto.Speed, RotationSpeed: dto.RotationSpeed}
 
 	p.playerSprite.SetOriginAtCenter()

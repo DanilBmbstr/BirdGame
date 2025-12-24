@@ -1,13 +1,13 @@
 package savingsystem
 
-import "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity"
+import "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
 
 var (
 	slot gameSave
 )
 
 type gameSave struct {
-	player entity.Player
+	player player.Player
 }
 
 func performSaving(gs gameSave) {

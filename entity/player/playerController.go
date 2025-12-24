@@ -1,4 +1,4 @@
-package entity
+package player
 
 import (
 	"math"
@@ -61,7 +61,7 @@ func (pc *PlayerController) Rotate(p *Player, dest gmath.Vec) {
 
 func (pc *PlayerController) MoveForward(p *Player) {
 	p.center = p.center.Add(p.direction.Normalized().Mulf(pc.Speed))
-	if p.playerTail.GetTailDistanceTo(p.center) > p.playerTail.SegmentLenght {
+	if p.playerTail.GetTailDistanceTo(p.center) > p.playerTail.segmentLenght {
 		p.playerTail.MoveTail(p.center)
 	}
 

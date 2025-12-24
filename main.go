@@ -30,7 +30,9 @@ import (
 	debugtools "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/DebugTools"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
-	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/enemy"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
+
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/inputEvents"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/level"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/optionsLoaders"
@@ -57,8 +59,8 @@ var (
 
 type BirdGame struct {
 	loader          *resource.Loader
-	player          *entity.Player
-	test_enemy      entity.BasicFox
+	player          *player.Player
+	test_enemy      enemy.BasicFox
 	loadedLocations [2]level.Location
 
 	handler *input.Handler
@@ -93,7 +95,7 @@ func (g *BirdGame) init() {
 	g.loader = assets.CreateLoader()
 
 	//Инициализация игрока
-	g.player = &entity.Player{}
+	g.player = &player.Player{}
 	img := g.loader.LoadImage(assets.Bird).Data
 	g.player.GetSprite().SetImage(img)
 	playerDTO = optionsLoaders.LoadPlayer(g.loader)

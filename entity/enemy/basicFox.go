@@ -1,7 +1,8 @@
-package entity
+package enemy
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
 	"github.com/quasilyte/gmath"
 )
 
@@ -12,7 +13,7 @@ type BasicFox struct {
 
 func (bs *BasicFox) Init(x, y float64, img *ebiten.Image) {
 	bs.Speed = 5
-	sprite := Sprite{Position: gmath.Vec{X: x, Y: y}}
+	sprite := assets.Sprite{Position: gmath.Vec{X: x, Y: y}}
 	sprite.SetOriginAtCenter()
 	sprite.SetImage(img)
 	sprite.SetScale(0.3)

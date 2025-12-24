@@ -1,4 +1,4 @@
-package entity
+package enemy
 
 /*──────────██
 ─────────█▒▒█
@@ -22,18 +22,21 @@ import (
 	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
+
 	"github.com/quasilyte/gmath"
 )
 
 type Enemy struct {
-	sprite     Sprite
+	sprite     assets.Sprite
 	Center     gmath.Vec
 	Direction  gmath.Vec
 	Lenght     float64
-	PlayerTail *Tail
+	PlayerTail *player.Tail
 }
 
-func (e *Enemy) Init(x, y float64, sprite Sprite) {
+func (e *Enemy) Init(x, y float64, sprite assets.Sprite) {
 	e.SetPosition(x, y)
 	e.sprite = sprite
 }
@@ -56,4 +59,8 @@ func (e *Enemy) DrawEntity(screen *ebiten.Image) error {
 	e.sprite.Position = e.Center
 	e.sprite.DrawSprite(screen)
 	return nil
+}
+
+func (e *Enemy) CheckCollisionsWithTail(tail *player.Tail) {
+
 }
