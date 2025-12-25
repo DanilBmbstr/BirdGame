@@ -3,7 +3,6 @@ package enemy
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
-	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
 	"github.com/quasilyte/gmath"
 )
@@ -25,9 +24,7 @@ type BasicFox struct {
 
 func (bs *BasicFox) Init(x, y float64, img *ebiten.Image) {
 
-	bs.colliderRadius = 30
-
-	bs.Parent.collider = collisionsystem.Shape{}
+	bs.colliderRadius = 35
 
 	bs.mode = basicFoxMode(chase)
 	bs.Speed = 5
@@ -70,9 +67,16 @@ func (bs *BasicFox) Move(player *player.Player) {
 	if bs.Parent.CheckCollisionsWithTail(player.GetTail()) {
 		bs.Destroy()
 	}
+	coef := 1.5
+	bs.Parent.collider.Points = []gmath.Vec{
 
-	bs.Parent.collider.Points = []gmath.Vec{gmath.Vec{X: bs.Parent.Center.X + bs.colliderRadius, Y: bs.Parent.Center.Y + bs.colliderRadius},
+		gmath.Vec{X: bs.Parent.Center.X + bs.colliderRadius, Y: bs.Parent.Center.Y + bs.colliderRadius},
+		gmath.Vec{X: bs.Parent.Center.X + 0, Y: bs.Parent.Center.Y + bs.colliderRadius*coef},
 		gmath.Vec{X: bs.Parent.Center.X - bs.colliderRadius, Y: bs.Parent.Center.Y + bs.colliderRadius},
+		gmath.Vec{X: bs.Parent.Center.X - bs.colliderRadius*coef, Y: bs.Parent.Center.Y + 0},
 		gmath.Vec{X: bs.Parent.Center.X - bs.colliderRadius, Y: bs.Parent.Center.Y - bs.colliderRadius},
-		gmath.Vec{X: bs.Parent.Center.X + bs.colliderRadius, Y: bs.Parent.Center.Y - bs.colliderRadius}}
+		gmath.Vec{X: bs.Parent.Center.X - 0, Y: bs.Parent.Center.Y - bs.colliderRadius*coef},
+		gmath.Vec{X: bs.Parent.Center.X + bs.colliderRadius, Y: bs.Parent.Center.Y - bs.colliderRadius},
+		gmath.Vec{X: bs.Parent.Center.X + bs.colliderRadius*coef, Y: bs.Parent.Center.Y - 0}}
+
 }

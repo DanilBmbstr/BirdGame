@@ -65,7 +65,7 @@ func CheckShapesCollision(shape1, shape2 Shape) bool {
 			return true
 		}
 	}
-	for j := 0; j < len(shape1.Points); j++ {
+	for j := 0; j < len(shape2.Points); j++ {
 		point := shape2.Points[j]
 		if CheckShapeCollisionWithPoint(point, shape1) {
 			return true
