@@ -34,7 +34,7 @@ func getProjectionsOverlapping(point gmath.Vec, shape Shape, divider gmath.Vec) 
 	}
 }
 
-func CheckCollisionWithShape(point gmath.Vec, shape Shape) bool {
+func CheckShapeCollisionWithPoint(point gmath.Vec, shape Shape) bool {
 
 	for i := 0; i < len(shape.Points); i++ {
 		shapeCopy := shape.Copy()
@@ -49,21 +49,27 @@ func CheckCollisionWithShape(point gmath.Vec, shape Shape) bool {
 
 		divider := getDividingVector(a, b)
 
-		//println(getProjectionsOverlapping(point, shapeCopy, divider))
 		if !getProjectionsOverlapping(point, shapeCopy, divider) {
-			//	print(getProjectionsOverlapping(point, shapeCopy, divider))
+
 			return false
 		}
 	}
 	return true
 
-	/*
-		divider := getDividingVector(shapeCopy.Points[2], shapeCopy.Points[0])
-		if !getProjectionsOverlapping(point, shapeCopy, divider) {
+}
 
+func CheckShapesCollision(shape1, shape2 Shape) bool {
+	for j := 0; j < len(shape1.Points); j++ {
+		point := shape1.Points[j]
+		if CheckShapeCollisionWithPoint(point, shape2) {
 			return true
-		} else {
-			return false
 		}
-	*/
+	}
+	for j := 0; j < len(shape1.Points); j++ {
+		point := shape2.Points[j]
+		if CheckShapeCollisionWithPoint(point, shape1) {
+			return true
+		}
+	}
+	return false
 }

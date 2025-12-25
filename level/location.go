@@ -70,7 +70,15 @@ func (l *CollisionMask) DrawLCollisionMask(screen *ebiten.Image) {
 
 func (l *CollisionMask) CheckCollisions(point gmath.Vec) bool {
 	for i := 0; i < len(l.shapes); i++ {
-		if collisionsystem.CheckCollisionWithShape(point, l.shapes[i]) {
+		if collisionsystem.CheckShapeCollisionWithPoint(point, l.shapes[i]) {
+			return true
+		}
+	}
+	return false
+}
+func (l *CollisionMask) CheckCollisionsWithShape(shape collisionsystem.Shape) bool {
+	for i := 0; i < len(l.shapes); i++ {
+		if collisionsystem.CheckShapesCollision(shape, l.shapes[i]) {
 			return true
 		}
 	}

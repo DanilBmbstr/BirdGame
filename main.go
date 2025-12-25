@@ -105,6 +105,7 @@ func (g *BirdGame) init() {
 	g.loadedLocations[1].LoadLocation(g.loader.LoadRaw(assets.Test_level2), levelScale)
 
 	g.test_enemy.Init(1000, 1000, g.loader.LoadImage(assets.BasicFox).Data)
+	g.test_enemy.RotationSpeed = 0.01
 
 }
 
@@ -137,7 +138,7 @@ func (g *BirdGame) Update() error {
 		}
 	}
 
-	g.test_enemy.Move(g.player.GetPosition())
+	g.test_enemy.Move(g.player)
 
 	inputEvents.UpdateInputEvents()
 	return nil
@@ -157,6 +158,7 @@ func (g *BirdGame) Draw(screen *ebiten.Image) {
 	}
 	g.player.DrawEntity(screen)
 	g.test_enemy.Parent.DrawEntity(screen)
+	g.test_enemy.Parent.GetCollider().DrawEntity(screen)
 	ebitenutil.DebugPrint(screen, strconv.FormatFloat(ebiten.ActualFPS(), 'f', 6, 64)+"\n"+strconv.FormatBool(debugCollisions))
 
 }

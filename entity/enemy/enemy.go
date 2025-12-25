@@ -23,6 +23,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
+	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
 
 	"github.com/quasilyte/gmath"
@@ -34,11 +35,17 @@ type Enemy struct {
 	Direction  gmath.Vec
 	Lenght     float64
 	PlayerTail *player.Tail
+	collider   collisionsystem.Shape
+}
+
+func (e *Enemy) GetCollider() *collisionsystem.Shape {
+	return &e.collider
 }
 
 func (e *Enemy) Init(x, y float64, sprite assets.Sprite) {
 	e.SetPosition(x, y)
 	e.sprite = sprite
+	e.sprite.SetOriginAtCenter()
 }
 
 func (e *Enemy) SetPosition(x, y float64) {
@@ -47,7 +54,7 @@ func (e *Enemy) SetPosition(x, y float64) {
 }
 
 func (e *Enemy) MoveTowards(dest gmath.Vec, speed float64) {
-	e.Center = e.Center.Add(e.Center.DirectionTo(dest).Normalized().Mulf(speed))
+	e.Center = e.Center.Add(e.Center.DirectionTo(dest).Mulf(speed))
 }
 
 func (e *Enemy) DrawEntity(screen *ebiten.Image) error {
@@ -61,6 +68,7 @@ func (e *Enemy) DrawEntity(screen *ebiten.Image) error {
 	return nil
 }
 
-func (e *Enemy) CheckCollisionsWithTail(tail *player.Tail) {
+func (e *Enemy) CheckCollisionsWithTail(tail *player.Tail) bool {
+	return (tail.GetCollider().CheckCollisionsWithShape(e.collider))
 
 }

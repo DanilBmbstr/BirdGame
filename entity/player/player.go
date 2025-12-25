@@ -42,6 +42,8 @@ import (
 )
 
 type Player struct {
+	PlayerDto optionsLoaders.PlayerDTO
+
 	playerSprite assets.Sprite
 	center       gmath.Vec
 	direction    gmath.Vec
@@ -64,6 +66,14 @@ type Player struct {
 	tailWidthNarrow         float32
 }
 
+func (p *Player) Reset() {
+	p.InitPlayer(1000, 1500, p.PlayerDto)
+}
+
+func (p *Player) GetDirection() gmath.Vec {
+	return p.direction
+}
+
 func (p *Player) GetTail() *Tail {
 	return p.playerTail
 }
@@ -77,7 +87,7 @@ func (p *Player) SetSprite(s assets.Sprite) {
 }
 
 func (p *Player) InitPlayer(xPos, yPos float64, dto optionsLoaders.PlayerDTO) {
-
+	p.PlayerDto = dto
 	p.direction = gmath.Vec{X: 1, Y: 1}
 	p.SetPosition(xPos, yPos)
 
