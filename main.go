@@ -125,6 +125,7 @@ func (g *BirdGame) Update() error {
 	MousePosition := gmath.Vec{X: float64(x), Y: float64(y)}
 
 	g.player.Controller.Rotate(g.player, MousePosition)
+	g.player.BattleSystem.Update()
 	if debugMode {
 		debugtools.Debug(g.player, g.loadedLocations[0])
 	} else {
@@ -158,7 +159,6 @@ func (g *BirdGame) Draw(screen *ebiten.Image) {
 	}
 	g.player.DrawEntity(screen)
 	g.test_enemy.Parent.DrawEntity(screen)
-	g.test_enemy.Parent.GetCollider().DrawEntity(screen)
 	ebitenutil.DebugPrint(screen, strconv.FormatFloat(ebiten.ActualFPS(), 'f', 6, 64)+"\n"+strconv.FormatBool(debugCollisions))
 
 }

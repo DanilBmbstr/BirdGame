@@ -9,6 +9,7 @@ func InitInputEvents() {
 
 	dict[ebiten.KeyF] = false
 	dict[ebiten.KeyAlt] = false
+	dict[ebiten.KeySpace] = false
 
 }
 

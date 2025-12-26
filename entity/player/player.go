@@ -42,8 +42,8 @@ import (
 )
 
 type Player struct {
-	PlayerDto optionsLoaders.PlayerDTO
-
+	PlayerDto    optionsLoaders.PlayerDTO
+	BattleSystem PlayerBattleSystem
 	playerSprite assets.Sprite
 	center       gmath.Vec
 	direction    gmath.Vec
@@ -119,6 +119,8 @@ func (p *Player) InitPlayer(xPos, yPos float64, dto optionsLoaders.PlayerDTO) {
 	p.playerSprite.SetOriginAtCenter()
 	p.playerSprite.MoveOrigin(gmath.Vec{X: 0, Y: -8})
 
+	p.BattleSystem.Init(30)
+
 }
 
 func (p *Player) SetPosition(x, y float64) {
@@ -146,8 +148,11 @@ func (p *Player) getFlanks(width float64) (gmath.Vec, gmath.Vec) {
 func (p *Player) DrawEntity(screen *ebiten.Image) {
 	xOffset := camera.X_offset - camera.WindowSizeX/2
 	yOffset := camera.Y_offset - camera.WindowSizeY/2
+	cs := p.tailColor
+	cs.SetA((0.49 - (float32(p.BattleSystem.HitTime) / 100)))
 
-	p.playerTail.DrawTail(screen, p.tailColor)
+	p.playerTail.DrawTail(screen, cs)
+
 	left, right := p.getFlanks(float64(p.tailStartWidth))
 	path := &vector.Path{}
 	path.MoveTo(p.center.AsVec32().X-float32(xOffset), p.center.AsVec32().Y-float32(yOffset))
@@ -167,7 +172,7 @@ func (p *Player) DrawEntity(screen *ebiten.Image) {
 	path.LineTo(float32(sLeft.X)-float32(xOffset), float32(sLeft.Y-yOffset))
 	path.LineTo(left.AsVec32().X-float32(xOffset), left.AsVec32().Y-float32(yOffset))
 	vector.FillPath(screen, path, &vector.FillOptions{FillRule: vector.FillRuleEvenOdd}, &vector.DrawPathOptions{AntiAlias: true,
-		ColorScale: p.tailColor})
+		ColorScale: cs})
 	p.playerSprite.Position = p.center
 	p.playerSprite.DrawSprite(screen)
 

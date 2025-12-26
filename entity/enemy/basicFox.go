@@ -3,6 +3,7 @@ package enemy
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
+	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
 	"github.com/quasilyte/gmath"
 )
@@ -12,6 +13,7 @@ type basicFoxMode int
 const (
 	chase basicFoxMode = iota
 	pursue
+	corpse
 )
 
 type BasicFox struct {
@@ -24,7 +26,7 @@ type BasicFox struct {
 
 func (bs *BasicFox) Init(x, y float64, img *ebiten.Image) {
 
-	bs.colliderRadius = 35
+	bs.colliderRadius = 31
 
 	bs.mode = basicFoxMode(chase)
 	bs.Speed = 5
@@ -58,14 +60,20 @@ func (bs *BasicFox) Move(player *player.Player) {
 			bs.Parent.MoveTowards(playerRight, bs.Speed)
 		}
 	} else if bs.mode == basicFoxMode(pursue) {
-		if bs.Parent.Center.DistanceTo(player.GetPosition()) < bs.Speed {
+		if collisionsystem.CheckShapeCollisionWithPoint(player.GetPosition(), bs.Parent.collider) {
 			player.Reset()
 			bs.Destroy()
 		}
 		bs.Parent.MoveTowards(player.GetPosition(), bs.Speed*2)
+	} else if bs.mode == corpse {
+		bs.Parent.sprite.SetScale(bs.Parent.sprite.GetScale() * 0.9)
+		if bs.Parent.sprite.GetScale() < 0.01 {
+			bs.Parent.sprite.SetScale(0.3)
+			bs.Destroy()
+		}
 	}
-	if bs.Parent.CheckCollisionsWithTail(player.GetTail()) {
-		bs.Destroy()
+	if bs.Parent.CheckCollisionsWithTail(player.GetTail()) && player.BattleSystem.HitTime > 1 {
+		bs.mode = corpse
 	}
 	coef := 1.5
 	bs.Parent.collider.Points = []gmath.Vec{
