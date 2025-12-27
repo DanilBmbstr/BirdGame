@@ -29,7 +29,7 @@ import (
 	"github.com/quasilyte/gmath"
 )
 
-type Enemy struct {
+type EnemyBasic struct {
 	sprite     assets.Sprite
 	Center     gmath.Vec
 	Direction  gmath.Vec
@@ -38,26 +38,26 @@ type Enemy struct {
 	collider   collisionsystem.Shape
 }
 
-func (e *Enemy) GetCollider() *collisionsystem.Shape {
+func (e *EnemyBasic) GetCollider() *collisionsystem.Shape {
 	return &e.collider
 }
 
-func (e *Enemy) Init(x, y float64, sprite assets.Sprite) {
+func (e *EnemyBasic) initBase(x, y float64, sprite assets.Sprite) {
 	e.SetPosition(x, y)
 	e.sprite = sprite
 	e.sprite.SetOriginAtCenter()
 }
 
-func (e *Enemy) SetPosition(x, y float64) {
+func (e *EnemyBasic) SetPosition(x, y float64) {
 	e.Center.X = x
 	e.Center.Y = y
 }
 
-func (e *Enemy) MoveTowards(dest gmath.Vec, speed float64) {
+func (e *EnemyBasic) MoveTowards(dest gmath.Vec, speed float64) {
 	e.Center = e.Center.Add(e.Center.DirectionTo(dest).Mulf(speed))
 }
 
-func (e *Enemy) DrawEntity(screen *ebiten.Image) error {
+func (e *EnemyBasic) DrawEntity(screen *ebiten.Image) error {
 	if (e.Center == gmath.Vec{}) {
 
 		return fmt.Errorf("enemy position is not initialized")
@@ -68,7 +68,7 @@ func (e *Enemy) DrawEntity(screen *ebiten.Image) error {
 	return nil
 }
 
-func (e *Enemy) CheckCollisionsWithTail(tail *player.Tail) bool {
+func (e *EnemyBasic) CheckCollisionsWithTail(tail *player.Tail) bool {
 	return (tail.GetCollider().CheckCollisionsWithShape(e.collider))
 
 }

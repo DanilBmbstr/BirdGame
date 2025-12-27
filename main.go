@@ -30,7 +30,7 @@ import (
 	debugtools "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/DebugTools"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
-	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/enemy"
+	enemymanager "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/enemyManager"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
 
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/inputEvents"
@@ -59,9 +59,9 @@ var (
 )
 
 type BirdGame struct {
-	loader          *resource.Loader
-	player          *player.Player
-	test_enemy      enemy.BasicFox
+	loader *resource.Loader
+	player *player.Player
+
 	loadedLocations [2]level.CollisionMask
 
 	handler *input.Handler
@@ -104,8 +104,7 @@ func (g *BirdGame) init() {
 	g.loadedLocations[0].LoadLocation(g.loader.LoadRaw(assets.Test_level), levelScale)
 	g.loadedLocations[1].LoadLocation(g.loader.LoadRaw(assets.Test_level2), levelScale)
 
-	g.test_enemy.Init(1000, 1000, g.loader.LoadImage(assets.BasicFox).Data)
-	g.test_enemy.RotationSpeed = 0.01
+	enemymanager.InitEnemies(g.loader)
 
 }
 
@@ -139,7 +138,7 @@ func (g *BirdGame) Update() error {
 		}
 	}
 
-	g.test_enemy.Move(g.player)
+	enemymanager.Update(g.player)
 
 	inputEvents.UpdateInputEvents()
 	return nil
@@ -158,7 +157,7 @@ func (g *BirdGame) Draw(screen *ebiten.Image) {
 		}
 	}
 	g.player.DrawEntity(screen)
-	g.test_enemy.Parent.DrawEntity(screen)
+	enemymanager.Draw(screen)
 	ebitenutil.DebugPrint(screen, strconv.FormatFloat(ebiten.ActualFPS(), 'f', 6, 64)+"\n"+strconv.FormatBool(debugCollisions))
 
 }

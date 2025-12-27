@@ -119,7 +119,7 @@ func (p *Player) InitPlayer(xPos, yPos float64, dto optionsLoaders.PlayerDTO) {
 	p.playerSprite.SetOriginAtCenter()
 	p.playerSprite.MoveOrigin(gmath.Vec{X: 0, Y: -8})
 
-	p.BattleSystem.Init(30)
+	p.BattleSystem.Init()
 
 }
 

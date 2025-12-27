@@ -17,15 +17,17 @@ const (
 )
 
 type BasicFox struct {
-	Parent         Enemy
+	EnemyBasic
 	Speed          float64
 	RotationSpeed  float64
 	mode           basicFoxMode
 	colliderRadius float64
+	isDestroyed    bool
 }
 
 func (bs *BasicFox) Init(x, y float64, img *ebiten.Image) {
-
+	bs.isDestroyed = false
+	bs.RotationSpeed = 0.01
 	bs.colliderRadius = 31
 
 	bs.mode = basicFoxMode(chase)
@@ -34,57 +36,60 @@ func (bs *BasicFox) Init(x, y float64, img *ebiten.Image) {
 	sprite.SetOriginAtCenter()
 	sprite.SetImage(img)
 	sprite.SetScale(0.3)
-	bs.Parent.Init(x, y, sprite)
+	bs.initBase(x, y, sprite)
+}
+
+func (bs *BasicFox) IsDestroyed() bool {
+	return bs.isDestroyed
 }
 
 func (bs *BasicFox) Destroy() {
-	bs.Parent.Center = gmath.Vec{X: 500, Y: 500}
-	bs.mode = basicFoxMode(chase)
+	bs.isDestroyed = true
 }
 
-func (bs *BasicFox) Move(player *player.Player) {
+func (bs *BasicFox) Update(player *player.Player) {
 
-	bs.Parent.sprite.Rotation += gmath.Rad(bs.RotationSpeed)
+	bs.sprite.Rotation += gmath.Rad(bs.RotationSpeed)
 
 	playerRight := player.GetPosition().Add(player.GetDirection().Rotated(80).Mulf(200))
 	playerLeft := player.GetPosition().Add(player.GetDirection().Rotated(-80).Mulf(200))
 
-	if bs.Parent.Center.DistanceTo(playerLeft) < bs.Speed || bs.Parent.Center.DistanceTo(playerRight) < bs.Speed {
+	if bs.Center.DistanceTo(playerLeft) < bs.Speed || bs.Center.DistanceTo(playerRight) < bs.Speed {
 		bs.mode = basicFoxMode(pursue)
 	}
 
 	if bs.mode == basicFoxMode(chase) {
-		if bs.Parent.Center.DistanceTo(playerLeft) < bs.Parent.Center.DistanceTo(playerRight) {
-			bs.Parent.MoveTowards(playerLeft, bs.Speed)
+		if bs.Center.DistanceTo(playerLeft) < bs.Center.DistanceTo(playerRight) {
+			bs.MoveTowards(playerLeft, bs.Speed)
 		} else {
-			bs.Parent.MoveTowards(playerRight, bs.Speed)
+			bs.MoveTowards(playerRight, bs.Speed)
 		}
 	} else if bs.mode == basicFoxMode(pursue) {
-		if collisionsystem.CheckShapeCollisionWithPoint(player.GetPosition(), bs.Parent.collider) {
+		if collisionsystem.CheckShapeCollisionWithPoint(player.GetPosition(), bs.collider) {
 			player.Reset()
 			bs.Destroy()
 		}
-		bs.Parent.MoveTowards(player.GetPosition(), bs.Speed*2)
+		bs.MoveTowards(player.GetPosition(), bs.Speed*2)
 	} else if bs.mode == corpse {
-		bs.Parent.sprite.SetScale(bs.Parent.sprite.GetScale() * 0.9)
-		if bs.Parent.sprite.GetScale() < 0.01 {
-			bs.Parent.sprite.SetScale(0.3)
+		bs.sprite.SetScale(bs.sprite.GetScale() * 0.9)
+		if bs.sprite.GetScale() < 0.01 {
+			bs.sprite.SetScale(0.3)
 			bs.Destroy()
 		}
 	}
-	if bs.Parent.CheckCollisionsWithTail(player.GetTail()) && player.BattleSystem.HitTime > 1 {
+	if bs.CheckCollisionsWithTail(player.GetTail()) && player.BattleSystem.HitTime > 1 {
 		bs.mode = corpse
 	}
 	coef := 1.5
-	bs.Parent.collider.Points = []gmath.Vec{
+	bs.collider.Points = []gmath.Vec{
 
-		gmath.Vec{X: bs.Parent.Center.X + bs.colliderRadius, Y: bs.Parent.Center.Y + bs.colliderRadius},
-		gmath.Vec{X: bs.Parent.Center.X + 0, Y: bs.Parent.Center.Y + bs.colliderRadius*coef},
-		gmath.Vec{X: bs.Parent.Center.X - bs.colliderRadius, Y: bs.Parent.Center.Y + bs.colliderRadius},
-		gmath.Vec{X: bs.Parent.Center.X - bs.colliderRadius*coef, Y: bs.Parent.Center.Y + 0},
-		gmath.Vec{X: bs.Parent.Center.X - bs.colliderRadius, Y: bs.Parent.Center.Y - bs.colliderRadius},
-		gmath.Vec{X: bs.Parent.Center.X - 0, Y: bs.Parent.Center.Y - bs.colliderRadius*coef},
-		gmath.Vec{X: bs.Parent.Center.X + bs.colliderRadius, Y: bs.Parent.Center.Y - bs.colliderRadius},
-		gmath.Vec{X: bs.Parent.Center.X + bs.colliderRadius*coef, Y: bs.Parent.Center.Y - 0}}
+		gmath.Vec{X: bs.Center.X + bs.colliderRadius, Y: bs.Center.Y + bs.colliderRadius},
+		gmath.Vec{X: bs.Center.X + 0, Y: bs.Center.Y + bs.colliderRadius*coef},
+		gmath.Vec{X: bs.Center.X - bs.colliderRadius, Y: bs.Center.Y + bs.colliderRadius},
+		gmath.Vec{X: bs.Center.X - bs.colliderRadius*coef, Y: bs.Center.Y + 0},
+		gmath.Vec{X: bs.Center.X - bs.colliderRadius, Y: bs.Center.Y - bs.colliderRadius},
+		gmath.Vec{X: bs.Center.X - 0, Y: bs.Center.Y - bs.colliderRadius*coef},
+		gmath.Vec{X: bs.Center.X + bs.colliderRadius, Y: bs.Center.Y - bs.colliderRadius},
+		gmath.Vec{X: bs.Center.X + bs.colliderRadius*coef, Y: bs.Center.Y - 0}}
 
 }
