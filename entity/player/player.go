@@ -34,6 +34,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
+	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
 
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/optionsLoaders"
 
@@ -68,6 +69,18 @@ type Player struct {
 
 func (p *Player) Reset() {
 	p.InitPlayer(1000, 1500, p.PlayerDto)
+}
+
+func (p *Player) GetCollider() *collisionsystem.Shape {
+	size := 50.0
+	collider := *&collisionsystem.Shape{}
+
+	collider.Points = append(collider.Points, p.GetPosition().Add(gmath.Vec{X: 0, Y: size}.Rotated(p.direction.Angle())))
+	collider.Points = append(collider.Points, p.GetPosition().Add(gmath.Vec{X: size, Y: 0}.Rotated(p.direction.Angle())))
+	collider.Points = append(collider.Points, p.GetPosition().Add(gmath.Vec{X: 0, Y: -size}.Rotated(p.direction.Angle())))
+
+	collider.Points = append(collider.Points, p.GetPosition().Add(gmath.Vec{X: -size / 2, Y: 0}.Rotated(p.direction.Angle())))
+	return &collider
 }
 
 func (p *Player) GetDirection() gmath.Vec {
@@ -149,7 +162,7 @@ func (p *Player) DrawEntity(screen *ebiten.Image) {
 	xOffset := camera.X_offset - camera.WindowSizeX/2
 	yOffset := camera.Y_offset - camera.WindowSizeY/2
 	cs := p.tailColor
-	cs.SetA((0.49 - (float32(p.BattleSystem.HitTime) / 100)))
+	cs.SetA((0.49 - (float32(p.BattleSystem.cooldown) / 100)))
 
 	p.playerTail.DrawTail(screen, cs)
 

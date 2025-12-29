@@ -14,8 +14,8 @@ type PlayerBattleSystem struct {
 
 func (pbs *PlayerBattleSystem) Init() {
 	pbs.HitTime = 1
-	pbs.hitMaxTime = 30
-	pbs.cooldownTime = 40
+	pbs.hitMaxTime = 4
+	pbs.cooldownTime = 30
 	pbs.cooldown = 0
 }
 

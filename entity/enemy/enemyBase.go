@@ -38,6 +38,10 @@ type EnemyBasic struct {
 	collider   collisionsystem.Shape
 }
 
+func (e *EnemyBasic) GetPosition() gmath.Vec {
+	return e.Center
+}
+
 func (e *EnemyBasic) GetCollider() *collisionsystem.Shape {
 	return &e.collider
 }

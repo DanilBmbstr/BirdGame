@@ -39,6 +39,14 @@ func (bs *BasicFox) Init(x, y float64, img *ebiten.Image) {
 	bs.initBase(x, y, sprite)
 }
 
+func (bs *BasicFox) SetSpeed(speed float64) {
+	bs.Speed = speed
+}
+
+func (bs *BasicFox) GetSpeed() float64 {
+	return bs.Speed
+}
+
 func (bs *BasicFox) IsDestroyed() bool {
 	return bs.isDestroyed
 }
@@ -65,12 +73,13 @@ func (bs *BasicFox) Update(player *player.Player) {
 			bs.MoveTowards(playerRight, bs.Speed)
 		}
 	} else if bs.mode == basicFoxMode(pursue) {
-		if collisionsystem.CheckShapeCollisionWithPoint(player.GetPosition(), bs.collider) {
+		if collisionsystem.CheckShapesCollision(bs.collider, *player.GetCollider()) {
 			player.Reset()
 			bs.Destroy()
 		}
 		bs.MoveTowards(player.GetPosition(), bs.Speed*2)
-	} else if bs.mode == corpse {
+
+	} else if bs.mode == basicFoxMode(corpse) {
 		bs.sprite.SetScale(bs.sprite.GetScale() * 0.9)
 		if bs.sprite.GetScale() < 0.01 {
 			bs.sprite.SetScale(0.3)
