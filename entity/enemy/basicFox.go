@@ -1,9 +1,12 @@
 package enemy
 
 import (
+	"math"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
 	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/entity"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
 	"github.com/quasilyte/gmath"
 )
@@ -19,6 +22,7 @@ const (
 type BasicFox struct {
 	EnemyBasic
 	Speed          float64
+	Velocity       float64
 	RotationSpeed  float64
 	mode           basicFoxMode
 	colliderRadius float64
@@ -26,12 +30,14 @@ type BasicFox struct {
 }
 
 func (bs *BasicFox) Init(x, y float64, img *ebiten.Image) {
+	bs.Speed = 5
+	bs.Velocity = bs.Speed
 	bs.isDestroyed = false
 	bs.RotationSpeed = 0.01
 	bs.colliderRadius = 31
 
 	bs.mode = basicFoxMode(chase)
-	bs.Speed = 5
+
 	sprite := assets.Sprite{Position: gmath.Vec{X: x, Y: y}}
 	sprite.SetOriginAtCenter()
 	sprite.SetImage(img)
@@ -47,6 +53,20 @@ func (bs *BasicFox) GetSpeed() float64 {
 	return bs.Speed
 }
 
+func (bs *BasicFox) SetVelocity(speed float64) {
+	bs.Velocity = speed
+}
+
+func (bs *BasicFox) PassBy(bs2 entity.Chaser) {
+	if math.Abs(bs.GetVelocity()-bs2.GetVelocity()) < 0.01 {
+		bs.Velocity = bs.Velocity / 2
+	}
+}
+
+func (bs *BasicFox) GetVelocity() float64 {
+	return bs.Velocity
+}
+
 func (bs *BasicFox) IsDestroyed() bool {
 	return bs.isDestroyed
 }
@@ -56,7 +76,9 @@ func (bs *BasicFox) Destroy() {
 }
 
 func (bs *BasicFox) Update(player *player.Player) {
-
+	if bs.Velocity < bs.Speed {
+		bs.Velocity *= 1.001
+	}
 	bs.sprite.Rotation += gmath.Rad(bs.RotationSpeed)
 
 	playerRight := player.GetPosition().Add(player.GetDirection().Rotated(80).Mulf(200))
@@ -68,16 +90,16 @@ func (bs *BasicFox) Update(player *player.Player) {
 
 	if bs.mode == basicFoxMode(chase) {
 		if bs.Center.DistanceTo(playerLeft) < bs.Center.DistanceTo(playerRight) {
-			bs.MoveTowards(playerLeft, bs.Speed)
+			bs.MoveTowards(playerLeft, bs.Velocity)
 		} else {
-			bs.MoveTowards(playerRight, bs.Speed)
+			bs.MoveTowards(playerRight, bs.Velocity)
 		}
 	} else if bs.mode == basicFoxMode(pursue) {
 		if collisionsystem.CheckShapesCollision(bs.collider, *player.GetCollider()) {
 			player.Reset()
 			bs.Destroy()
 		}
-		bs.MoveTowards(player.GetPosition(), bs.Speed*2)
+		bs.MoveTowards(player.GetPosition(), bs.Velocity*2)
 
 	} else if bs.mode == basicFoxMode(corpse) {
 		bs.sprite.SetScale(bs.sprite.GetScale() * 0.9)

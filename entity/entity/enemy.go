@@ -14,6 +14,13 @@ type Enemy interface {
 	IsDestroyed() bool
 	GetPosition() gmath.Vec
 	GetCollider() *collisionsystem.Shape
+}
+
+type Chaser interface {
+	Enemy
 	GetSpeed() float64
 	SetSpeed(float64)
+	GetVelocity() float64
+	SetVelocity(float64)
+	PassBy(Chaser)
 }

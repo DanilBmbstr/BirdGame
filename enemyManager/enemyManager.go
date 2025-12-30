@@ -11,38 +11,43 @@ import (
 )
 
 var (
-	enemies []entity.Enemy = []entity.Enemy{&enemy.BasicFox{}, &enemy.BasicFox{}}
+	chaserEnemyes []entity.Chaser = []entity.Chaser{&enemy.BasicFox{}, &enemy.BasicFox{}}
+	enemyes       []entity.Enemy
 
 	rLoader *resource.Loader
 )
 
 func InitEnemies(loader *resource.Loader) {
+
 	rLoader = loader
-	enemies[0].Init(1500, 1500, loader.LoadImage(assets.BasicFox).Data)
-	enemies[1].Init(3000, 1500, loader.LoadImage(assets.BasicFox).Data)
+
+	for _, i := range chaserEnemyes {
+		i.Init(1500, 1500, loader.LoadImage(assets.BasicFox).Data)
+	}
 
 }
 
 func Update(player *player.Player) {
-	for i := range enemies {
-		for j := range enemies {
+	for i := range chaserEnemyes {
+		for j := range chaserEnemyes {
 
-			if collisionsystem.CheckShapesCollision(*enemies[i].GetCollider(), *enemies[j].GetCollider()) && i != j {
-				if enemies[i].GetSpeed() == enemies[j].GetSpeed() {
-					enemies[i].SetSpeed(enemies[i].GetSpeed() / 2)
-				}
+			if collisionsystem.CheckShapesCollision(*chaserEnemyes[i].GetCollider(), *chaserEnemyes[j].GetCollider()) && i != j {
+
+				chaserEnemyes[i].PassBy(chaserEnemyes[j])
+
 			}
 		}
-		if enemies[i].IsDestroyed() {
-
-			enemies[i] = &enemy.BasicFox{}
-			enemies[i].Init(1500, 1500, rLoader.LoadImage(assets.BasicFox).Data)
+		if chaserEnemyes[i].IsDestroyed() {
+			chaserEnemyes[i] = &enemy.BasicFox{}
+			chaserEnemyes[i].Init(1500, 1500, rLoader.LoadImage(assets.BasicFox).Data)
 		}
-		enemies[i].Update(player)
+		chaserEnemyes[i].Update(player)
 	}
+
 }
 
 func Draw(screen *ebiten.Image) {
-	enemies[0].DrawEntity(screen)
-	enemies[1].DrawEntity(screen)
+	for _, i := range chaserEnemyes {
+		i.DrawEntity(screen)
+	}
 }
