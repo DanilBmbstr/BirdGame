@@ -9,14 +9,13 @@ func getDividingVector(a, b gmath.Vec) gmath.Vec {
 
 }
 
-func getProjectionsOverlapping(point gmath.Vec, shape Shape, divider gmath.Vec) bool {
+func getProjectionsOverlapping(point gmath.Vec, shape Shape, dividerAngle gmath.Rad) bool {
 
-	//divider = divider.Rotated(-divider.Angle())
-	point = point.Rotated(-divider.Angle())
-	maxY := shape.Points[0].Rotated(-divider.Angle()).Y
-	minY := shape.Points[0].Rotated(-divider.Angle()).Y
-	for i := 0; i < len(shape.Points); i++ {
-		shape.Points[i] = shape.Points[i].Rotated(-divider.Angle())
+	point = point.Rotated(dividerAngle)
+	maxY := shape.Points[0].Rotated(dividerAngle).Y
+	minY := shape.Points[0].Rotated(dividerAngle).Y
+	for i := 1; i < len(shape.Points); i++ {
+		shape.Points[i] = shape.Points[i].Rotated(dividerAngle)
 		if shape.Points[i].Y > maxY {
 			maxY = shape.Points[i].Y
 		}
@@ -35,13 +34,13 @@ func getProjectionsOverlapping(point gmath.Vec, shape Shape, divider gmath.Vec) 
 }
 
 func CheckShapeCollisionWithPoint(point gmath.Vec, shape Shape) bool {
-
+	var b gmath.Vec
+	pointsNum := len(shape.Points) - 1
 	for i := 0; i < len(shape.Points); i++ {
 		shapeCopy := shape.Copy()
 		a := shapeCopy.Points[i]
 
-		var b gmath.Vec
-		if i == len(shapeCopy.Points)-1 {
+		if i == pointsNum {
 			b = shapeCopy.Points[0]
 		} else {
 			b = shapeCopy.Points[i+1]
@@ -49,7 +48,7 @@ func CheckShapeCollisionWithPoint(point gmath.Vec, shape Shape) bool {
 
 		divider := getDividingVector(a, b)
 
-		if !getProjectionsOverlapping(point, shapeCopy, divider) {
+		if !getProjectionsOverlapping(point, shapeCopy, -divider.Angle()) {
 
 			return false
 		}
