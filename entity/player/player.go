@@ -76,7 +76,7 @@ func (p *Player) GetCollider() *collisionsystem.Shape {
 	collider := *&collisionsystem.Shape{}
 
 	collider.Points = append(collider.Points, p.GetPosition().Add(gmath.Vec{X: 0, Y: size}.Rotated(p.direction.Angle())))
-	collider.Points = append(collider.Points, p.GetPosition().Add(gmath.Vec{X: size, Y: 0}.Rotated(p.direction.Angle())))
+	collider.Points = append(collider.Points, p.GetPosition().Add(gmath.Vec{X: size / 2, Y: 0}.Rotated(p.direction.Angle())))
 	collider.Points = append(collider.Points, p.GetPosition().Add(gmath.Vec{X: 0, Y: -size}.Rotated(p.direction.Angle())))
 
 	collider.Points = append(collider.Points, p.GetPosition().Add(gmath.Vec{X: -size / 2, Y: 0}.Rotated(p.direction.Angle())))

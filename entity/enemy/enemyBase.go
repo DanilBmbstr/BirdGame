@@ -30,12 +30,13 @@ import (
 )
 
 type EnemyBasic struct {
-	sprite     assets.Sprite
-	Center     gmath.Vec
-	Direction  gmath.Vec
-	Lenght     float64
-	PlayerTail *player.Tail
-	collider   collisionsystem.Shape
+	sprite      assets.Sprite
+	Center      gmath.Vec
+	Direction   gmath.Vec
+	Lenght      float64
+	PlayerTail  *player.Tail
+	collider    collisionsystem.Shape
+	isDestroyed bool
 }
 
 func (e *EnemyBasic) GetPosition() gmath.Vec {
@@ -51,7 +52,9 @@ func (e *EnemyBasic) initBase(x, y float64, sprite assets.Sprite) {
 	e.sprite = sprite
 	e.sprite.SetOriginAtCenter()
 }
-
+func (e *EnemyBasic) IsDestroyed() bool {
+	return e.isDestroyed
+}
 func (e *EnemyBasic) SetPosition(x, y float64) {
 	e.Center.X = x
 	e.Center.Y = y

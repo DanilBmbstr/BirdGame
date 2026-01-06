@@ -138,7 +138,7 @@ func (g *BirdGame) Update() error {
 		}
 	}
 
-	enemymanager.Update(g.player)
+	enemymanager.Update(g.player, &g.loadedLocations[0])
 
 	inputEvents.UpdateInputEvents()
 	return nil
@@ -157,8 +157,9 @@ func (g *BirdGame) Draw(screen *ebiten.Image) {
 		}
 	}
 	g.player.DrawEntity(screen)
-
+	g.player.GetCollider().DrawEntity(screen)
 	enemymanager.Draw(screen)
+
 	ebitenutil.DebugPrint(screen, strconv.FormatFloat(ebiten.ActualFPS(), 'f', 6, 64)+"\n"+strconv.FormatBool(debugCollisions))
 
 }

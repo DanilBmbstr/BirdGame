@@ -3,11 +3,12 @@ package enemy
 import (
 	"math"
 
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/assets"
 	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/entity"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/level"
+	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/gmath"
 )
 
@@ -26,10 +27,9 @@ type BasicFox struct {
 	RotationSpeed  float64
 	mode           basicFoxMode
 	colliderRadius float64
-	isDestroyed    bool
 }
 
-func (bs *BasicFox) Init(x, y float64, img *ebiten.Image) {
+func (bs *BasicFox) Init(x, y float64, loader *resource.Loader) {
 	bs.Speed = 5
 	bs.Velocity = bs.Speed
 	bs.isDestroyed = false
@@ -40,7 +40,7 @@ func (bs *BasicFox) Init(x, y float64, img *ebiten.Image) {
 
 	sprite := assets.Sprite{Position: gmath.Vec{X: x, Y: y}}
 	sprite.SetOriginAtCenter()
-	sprite.SetImage(img)
+	sprite.SetImage(loader.LoadImage(assets.BasicFox).Data)
 	sprite.SetScale(0.3)
 	bs.initBase(x, y, sprite)
 }
@@ -57,7 +57,7 @@ func (bs *BasicFox) SetVelocity(speed float64) {
 	bs.Velocity = speed
 }
 
-func (bs *BasicFox) PassBy(bs2 entity.Chaser) {
+func (bs *BasicFox) PassBy(bs2 entity.Enemy) {
 	if math.Abs(bs.GetVelocity()-bs2.GetVelocity()) < 0.01 {
 		bs.Velocity = bs.Velocity / 2
 	}
@@ -67,15 +67,11 @@ func (bs *BasicFox) GetVelocity() float64 {
 	return bs.Velocity
 }
 
-func (bs *BasicFox) IsDestroyed() bool {
-	return bs.isDestroyed
-}
-
 func (bs *BasicFox) Destroy() {
 	bs.isDestroyed = true
 }
 
-func (bs *BasicFox) Update(player *player.Player) {
+func (bs *BasicFox) Update(player *player.Player, location *level.CollisionMask) {
 	if bs.Velocity < bs.Speed {
 		bs.Velocity *= 1.001
 	}
@@ -104,13 +100,18 @@ func (bs *BasicFox) Update(player *player.Player) {
 	} else if bs.mode == basicFoxMode(corpse) {
 		bs.sprite.SetScale(bs.sprite.GetScale() * 0.9)
 		if bs.sprite.GetScale() < 0.01 {
-			bs.sprite.SetScale(0.3)
+
 			bs.Destroy()
 		}
 	}
 	if bs.CheckCollisionsWithTail(player.GetTail()) && player.BattleSystem.HitTime > 1 {
 		bs.mode = corpse
 	}
+
+	bs.updateCollider()
+}
+
+func (bs *BasicFox) updateCollider() {
 	coef := 1.5
 	bs.collider.Points = []gmath.Vec{
 
@@ -122,5 +123,4 @@ func (bs *BasicFox) Update(player *player.Player) {
 		gmath.Vec{X: bs.Center.X - 0, Y: bs.Center.Y - bs.colliderRadius*coef},
 		gmath.Vec{X: bs.Center.X + bs.colliderRadius, Y: bs.Center.Y - bs.colliderRadius},
 		gmath.Vec{X: bs.Center.X + bs.colliderRadius*coef, Y: bs.Center.Y - 0}}
-
 }
