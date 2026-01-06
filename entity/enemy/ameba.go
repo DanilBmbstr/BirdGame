@@ -73,7 +73,7 @@ func (a *Ameba) Update(player *player.Player, location *level.CollisionMask) {
 	a.SetPosition((a.GetPosition().Add(a.GetPosition().DirectionTo(a.target))).X, a.GetPosition().Add(a.GetPosition().DirectionTo(a.target)).Y)
 
 	a.updateCollider()
-	if location.CheckCollisionsWithShape(a.collider) {
+	if location.CheckCollisions(a.collider.Points[0]) || location.CheckCollisions(a.collider.Points[len(a.collider.Points)-1]) {
 
 		a.SetPosition(a.postmp.X, a.postmp.Y)
 		a.target = a.targtmp
@@ -81,9 +81,10 @@ func (a *Ameba) Update(player *player.Player, location *level.CollisionMask) {
 	if collisionsystem.CheckShapesCollision(a.collider, *player.GetCollider()) {
 		player.Reset()
 	}
-
-	if a.CheckCollisionsWithTail(player.GetTail()) && player.BattleSystem.HitTime > 1 {
-		a.corpseMode = true
+	if player.BattleSystem.HitTime > 1 {
+		if a.CheckCollisionsWithTail(player.GetTail()) {
+			a.corpseMode = true
+		}
 	}
 }
 
