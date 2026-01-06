@@ -157,7 +157,7 @@ func (g *BirdGame) Draw(screen *ebiten.Image) {
 		}
 	}
 	g.player.DrawEntity(screen)
-	g.player.GetCollider().DrawEntity(screen)
+	//g.player.GetCollider().DrawEntity(screen)
 	enemymanager.Draw(screen)
 
 	ebitenutil.DebugPrint(screen, strconv.FormatFloat(ebiten.ActualFPS(), 'f', 6, 64)+"\n"+strconv.FormatBool(debugCollisions))

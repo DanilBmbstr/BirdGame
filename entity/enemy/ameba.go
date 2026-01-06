@@ -73,7 +73,9 @@ func (a *Ameba) Update(player *player.Player, location *level.CollisionMask) {
 	a.SetPosition((a.GetPosition().Add(a.GetPosition().DirectionTo(a.target))).X, a.GetPosition().Add(a.GetPosition().DirectionTo(a.target)).Y)
 
 	a.updateCollider()
-	if location.CheckCollisions(a.collider.Points[0]) || location.CheckCollisions(a.collider.Points[len(a.collider.Points)-1]) {
+	if location.CheckCollisions(a.collider.Points[1]) ||
+
+		location.CheckCollisions(a.collider.Points[5]) {
 
 		a.SetPosition(a.postmp.X, a.postmp.Y)
 		a.target = a.targtmp

@@ -2,7 +2,6 @@ package enemymanager
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/enemy"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/entity"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
@@ -11,7 +10,7 @@ import (
 )
 
 var (
-	enemyes []entity.Enemy = []entity.Enemy{&enemy.BasicFox{}, &enemy.BasicFox{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}}
+	enemyes []entity.Enemy = []entity.Enemy{&enemy.BasicFox{}, &enemy.BasicFox{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.BasicFox{}, &enemy.BasicFox{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}}
 
 	rLoader *resource.Loader
 )
@@ -38,7 +37,7 @@ func Update(player *player.Player, location *level.CollisionMask) {
 	for i := range enemyes {
 		for j := range enemyes {
 
-			if collisionsystem.CheckShapesCollision(*enemyes[i].GetCollider(), *enemyes[j].GetCollider()) && i != j {
+			if i != j {
 
 				enemyes[i].PassBy(enemyes[j])
 
@@ -53,7 +52,7 @@ func Update(player *player.Player, location *level.CollisionMask) {
 func Draw(screen *ebiten.Image) {
 	for _, i := range enemyes {
 		i.DrawEntity(screen)
-		i.GetCollider().DrawEntity(screen)
+		//i.GetCollider().DrawEntity(screen)
 	}
 
 }

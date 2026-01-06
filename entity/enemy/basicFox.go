@@ -20,6 +20,10 @@ const (
 	corpse
 )
 
+const (
+	regularSpeedInc = 0.01
+)
+
 type BasicFox struct {
 	EnemyBasic
 	Speed          float64
@@ -58,8 +62,11 @@ func (bs *BasicFox) SetVelocity(speed float64) {
 }
 
 func (bs *BasicFox) PassBy(bs2 entity.Enemy) {
-	if math.Abs(bs.GetVelocity()-bs2.GetVelocity()) < 0.01 {
-		bs.Velocity = bs.Velocity / 2
+
+	if math.Abs(bs.GetVelocity()-bs2.GetVelocity()) < regularSpeedInc*10 {
+		if collisionsystem.CheckShapesCollision(*bs.GetCollider(), *bs2.GetCollider()) {
+			bs.Velocity = bs.Velocity / 2
+		}
 	}
 }
 
@@ -73,7 +80,7 @@ func (bs *BasicFox) Destroy() {
 
 func (bs *BasicFox) Update(player *player.Player, location *level.CollisionMask) {
 	if bs.Velocity < bs.Speed {
-		bs.Velocity *= 1.001
+		bs.Velocity *= 1 + regularSpeedInc
 	}
 	bs.sprite.Rotation += gmath.Rad(bs.RotationSpeed)
 
