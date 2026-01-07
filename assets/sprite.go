@@ -18,6 +18,7 @@ package assets
 ⣿⣿⣿⣿⣿⣿⣿⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿*/
 import (
 	"fmt"
+	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
@@ -31,6 +32,9 @@ type Sprite struct {
 	Position    gmath.Vec
 	Rotation    gmath.Rad
 	imageSize   gmath.Vec
+	Rect        image.Rectangle
+
+	animationOffset int
 }
 
 func (s *Sprite) DrawSprite(screen *ebiten.Image) {
@@ -45,16 +49,29 @@ func (s *Sprite) DrawSprite(screen *ebiten.Image) {
 	imageOptions.GeoM.Scale(s.scale, s.scale)
 	imageOptions.GeoM.Translate(-rotationOffset.X, -rotationOffset.Y)
 	imageOptions.GeoM.Translate(s.Position.X-xOffset, s.Position.Y-yOffset)
+	if s.Rect != image.Rect(0, 0, s.spriteImage.Bounds().Max.X, s.spriteImage.Bounds().Max.Y) {
+		rect := s.Rect
+		rect.Min.X += s.animationOffset
+		rect.Max.X += s.animationOffset
+		screen.DrawImage(s.spriteImage.SubImage(rect).(*ebiten.Image), &imageOptions)
+		return
+	}
 	screen.DrawImage(s.spriteImage, &imageOptions)
 
 }
 
 func (s *Sprite) SetImage(img *ebiten.Image) {
+	s.animationOffset = 0
 	s.imageSize = gmath.Vec{X: float64(img.Bounds().Max.X), Y: float64(img.Bounds().Max.Y)}
+	if (s.Rect == image.Rectangle{}) {
+		s.Rect = image.Rect(0, 0, int(s.imageSize.X), int(s.imageSize.Y))
+	}
 	s.scale = 1
 	s.origin = gmath.Vec{X: 0, Y: 0}
 	s.Rotation = 0
+
 	s.spriteImage = img
+
 }
 
 func (s *Sprite) GetImage() *ebiten.Image {
@@ -79,13 +96,30 @@ func (s *Sprite) GetOrigin() gmath.Vec {
 
 func (s *Sprite) SetOrigin(pos gmath.Vec) {
 	s.origin = pos
+
+}
+
+func (s *Sprite) Animate() {
+	if s.animationOffset < s.imageSize.ToStd().X-s.Rect.Dx() {
+		s.animationOffset += s.Rect.Dx()
+	} else {
+		s.animationOffset = 0
+	}
+
 }
 
 func (s *Sprite) SetOriginAtCenter() error {
 	if s.spriteImage == nil {
 		return fmt.Errorf("Sprite image is not set")
 	}
-	s.origin = s.GetImageSize().Mulf(0.5)
+
+	if s.Rect != image.Rect(0, 0, s.imageSize.ToStd().X, s.imageSize.ToStd().Y) {
+		s.origin = gmath.Vec{X: (float64(s.Rect.Max.X-s.Rect.Min.X) / 2) * s.scale, Y: (float64(s.Rect.Max.Y-s.Rect.Min.Y) / 2) * s.scale}
+	} else {
+
+		s.origin = s.GetImageSize().Mulf(0.5)
+
+	}
 	return nil
 
 }

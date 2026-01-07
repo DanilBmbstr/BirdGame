@@ -28,6 +28,7 @@ const (
 	Back
 	BasicFox
 	Ameba
+	Frog
 )
 
 func registerImageResources(loader *resource.Loader) {
@@ -36,6 +37,7 @@ func registerImageResources(loader *resource.Loader) {
 		Back:     {Path: "images/background3.png"},
 		BasicFox: {Path: "images/BasicFox.png"},
 		Ameba:    {Path: "images/Ameba.png"},
+		Frog:     {Path: "images/frog_test_anim.png"},
 	}
 
 	for id, res := range imageResources {

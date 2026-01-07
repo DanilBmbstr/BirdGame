@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	enemyes []entity.Enemy = []entity.Enemy{&enemy.BasicFox{}, &enemy.BasicFox{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.BasicFox{}, &enemy.BasicFox{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}, &enemy.Ameba{}}
+	enemyes []entity.Enemy = []entity.Enemy{&enemy.Ameba{}, &enemy.BasicFox{}, &enemy.Frog{}}
 
 	rLoader *resource.Loader
 )
