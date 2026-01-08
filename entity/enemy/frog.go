@@ -28,6 +28,7 @@ type Frog struct {
 }
 
 func (f *Frog) Init(x, y float64, loader *resource.Loader) {
+
 	f.corpseMode = false
 	f.steps = 0
 	f.Speed = 0.15
@@ -37,12 +38,18 @@ func (f *Frog) Init(x, y float64, loader *resource.Loader) {
 	f.colliderRadius = 31
 
 	sprite := assets.Sprite{Position: gmath.Vec{X: x, Y: y}}
-	sprite.Rect = image.Rectangle{image.Point{0, 0}, image.Point{300, 300}}
+	sprite.Rect = image.Rectangle{image.Point{0, 0}, image.Point{300, 342}}
 	sprite.SetOriginAtCenter()
 	sprite.SetImage(loader.LoadImage(assets.Frog).Data)
+	sprite.Anim.AnimationRate = 4
+	sprite.Anim.Loop = false
 	sprite.SetScale(0.3)
+
 	f.initBase(x, y, sprite)
+	f.sprite.SetFrame(-1)
+
 	f.target = f.GetPosition()
+
 }
 
 func (f *Frog) die() {
@@ -54,7 +61,8 @@ func (f *Frog) die() {
 }
 
 func (f *Frog) Update(player *player.Player, location *level.CollisionMask) {
-	f.sprite.Animate()
+	f.sprite.AnimateBackwards()
+
 }
 
 func (f *Frog) updateCollider() {

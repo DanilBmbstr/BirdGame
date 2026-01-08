@@ -49,6 +49,7 @@ func (e *EnemyBasic) GetCollider() *collisionsystem.Shape {
 
 func (e *EnemyBasic) initBase(x, y float64, sprite assets.Sprite) {
 	e.SetPosition(x, y)
+
 	e.sprite = sprite
 	e.sprite.SetOriginAtCenter()
 }

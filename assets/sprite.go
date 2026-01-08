@@ -19,6 +19,7 @@ package assets
 import (
 	"fmt"
 	"image"
+	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/camera"
@@ -34,10 +35,11 @@ type Sprite struct {
 	imageSize   gmath.Vec
 	Rect        image.Rectangle
 
-	animationOffset int
+	Anim AnimationOptions
 }
 
 func (s *Sprite) DrawSprite(screen *ebiten.Image) {
+
 	xOffset := camera.X_offset - camera.WindowSizeX/2
 	yOffset := camera.Y_offset - camera.WindowSizeY/2
 	rotationOffset := s.origin.Rotated(s.Rotation)
@@ -51,9 +53,10 @@ func (s *Sprite) DrawSprite(screen *ebiten.Image) {
 	imageOptions.GeoM.Translate(s.Position.X-xOffset, s.Position.Y-yOffset)
 	if s.Rect != image.Rect(0, 0, s.spriteImage.Bounds().Max.X, s.spriteImage.Bounds().Max.Y) {
 		rect := s.Rect
-		rect.Min.X += s.animationOffset
-		rect.Max.X += s.animationOffset
+		rect.Min.X += s.Anim.animationOffset
+		rect.Max.X += s.Anim.animationOffset
 		screen.DrawImage(s.spriteImage.SubImage(rect).(*ebiten.Image), &imageOptions)
+
 		return
 	}
 	screen.DrawImage(s.spriteImage, &imageOptions)
@@ -61,7 +64,9 @@ func (s *Sprite) DrawSprite(screen *ebiten.Image) {
 }
 
 func (s *Sprite) SetImage(img *ebiten.Image) {
-	s.animationOffset = 0
+	s.Anim.animationTime = 0
+
+	s.Anim.animationOffset = 0
 	s.imageSize = gmath.Vec{X: float64(img.Bounds().Max.X), Y: float64(img.Bounds().Max.Y)}
 	if (s.Rect == image.Rectangle{}) {
 		s.Rect = image.Rect(0, 0, int(s.imageSize.X), int(s.imageSize.Y))
@@ -71,7 +76,10 @@ func (s *Sprite) SetImage(img *ebiten.Image) {
 	s.Rotation = 0
 
 	s.spriteImage = img
+	if s.Anim.AnimationRate == 0 {
+		s.Anim.AnimationRate = 1
 
+	}
 }
 
 func (s *Sprite) GetImage() *ebiten.Image {
@@ -100,11 +108,51 @@ func (s *Sprite) SetOrigin(pos gmath.Vec) {
 }
 
 func (s *Sprite) Animate() {
-	if s.animationOffset < s.imageSize.ToStd().X-s.Rect.Dx() {
-		s.animationOffset += s.Rect.Dx()
-	} else {
-		s.animationOffset = 0
+
+	if s.Anim.animationTime == s.Anim.AnimationRate {
+
+		if s.Anim.animationOffset < s.imageSize.ToStd().X-s.Rect.Dx()*2 {
+			s.Anim.animationOffset += s.Rect.Dx()
+		} else {
+			if s.Anim.Loop {
+				s.Anim.animationOffset = 0
+			}
+		}
+		s.Anim.animationTime = 0
 	}
+	s.Anim.animationTime++
+
+}
+
+func (s *Sprite) SetFrame(frame int) {
+	if frame >= 0 {
+		s.Anim.animationOffset = s.Rect.Dx() * frame
+
+	} else {
+		s.Anim.animationOffset = s.imageSize.ToStd().X - s.Rect.Dx()*int(math.Abs(float64(frame)))
+
+	}
+
+}
+func (s *Sprite) GetAnimOffset() int {
+	return s.Anim.animationOffset
+}
+
+func (s *Sprite) AnimateBackwards() {
+
+	if s.Anim.animationTime == s.Anim.AnimationRate {
+
+		if s.Anim.animationOffset > s.Rect.Dx() {
+
+			s.Anim.animationOffset -= s.Rect.Dx()
+		} else {
+			if s.Anim.Loop {
+				s.Anim.animationOffset = s.imageSize.ToStd().X - s.Rect.Dx()*2
+			}
+		}
+		s.Anim.animationTime = 0
+	}
+	s.Anim.animationTime++
 
 }
 
