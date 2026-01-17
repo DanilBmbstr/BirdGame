@@ -8,6 +8,7 @@ import (
 	collisionsystem "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/collisionSystem"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/entity"
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
+
 	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/level"
 	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/gmath"

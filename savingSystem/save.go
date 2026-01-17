@@ -1,6 +1,8 @@
 package savingsystem
 
-import "github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
+import (
+	"github.com/hajimehoshi/ebiten/v2/cmd/BirdGame/entity/player"
+)
 
 var (
 	slot gameSave

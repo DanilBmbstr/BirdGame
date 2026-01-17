@@ -80,3 +80,7 @@ func (e *EnemyBasic) CheckCollisionsWithTail(tail *player.Tail) bool {
 	return (tail.GetCollider().CheckCollisionsWithShape(e.collider))
 
 }
+
+func Seconds(a float64) float64 {
+	return a * 60
+}

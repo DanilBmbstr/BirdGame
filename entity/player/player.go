@@ -65,10 +65,14 @@ type Player struct {
 	tailStartWidth          float32
 	tailWidth               float32
 	tailWidthNarrow         float32
+
+	Corpse bool
 }
 
 func (p *Player) Reset() {
-	p.InitPlayer(1000, 1500, p.PlayerDto)
+
+	p.Corpse = true
+
 }
 
 func (p *Player) GetCollider() *collisionsystem.Shape {
@@ -100,7 +104,11 @@ func (p *Player) SetSprite(s assets.Sprite) {
 }
 
 func (p *Player) InitPlayer(xPos, yPos float64, dto optionsLoaders.PlayerDTO) {
+
+	p.Corpse = false
+
 	p.PlayerDto = dto
+
 	p.direction = gmath.Vec{X: 1, Y: 1}
 	p.SetPosition(xPos, yPos)
 

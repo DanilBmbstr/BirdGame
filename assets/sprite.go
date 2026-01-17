@@ -142,7 +142,7 @@ func (s *Sprite) AnimateBackwards() {
 
 	if s.Anim.animationTime == s.Anim.AnimationRate {
 
-		if s.Anim.animationOffset > s.Rect.Dx() {
+		if s.Anim.animationOffset > 0 {
 
 			s.Anim.animationOffset -= s.Rect.Dx()
 		} else {

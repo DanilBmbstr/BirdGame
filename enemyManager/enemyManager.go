@@ -10,12 +10,19 @@ import (
 )
 
 var (
-	enemyes []entity.Enemy = []entity.Enemy{&enemy.Ameba{}, &enemy.BasicFox{}, &enemy.Frog{}}
+	enemyes []entity.Enemy
 
 	rLoader *resource.Loader
 )
 
 func InitEnemies(loader *resource.Loader) {
+	enemyes = []entity.Enemy{&enemy.Ameba{}, &enemy.BasicFox{}}
+	frog := &enemy.Frog{}
+	frog.SetArea(1000, 1000, 2500, 2500)
+	enemyes = append(enemyes, frog)
+	frog2 := &enemy.Frog{}
+	frog2.SetArea(1000, 1000, 2500, 2500)
+	enemyes = append(enemyes, frog2)
 
 	rLoader = loader
 
@@ -23,6 +30,10 @@ func InitEnemies(loader *resource.Loader) {
 		i.Init(1500, 1500, loader)
 	}
 
+}
+
+func ReInit() {
+	InitEnemies(rLoader)
 }
 
 func Update(player *player.Player, location *level.CollisionMask) {

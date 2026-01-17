@@ -126,6 +126,9 @@ func (g *BirdGame) Update() error {
 	g.player.Controller.Rotate(g.player, MousePosition)
 	g.player.BattleSystem.Update()
 	if debugMode {
+		if ebiten.IsKeyPressed(ebiten.KeyE) {
+			println(g.player.GetPosition().String())
+		}
 		debugtools.Debug(g.player, g.loadedLocations[0])
 	} else {
 		g.player.Controller.MoveForward(g.player)
@@ -141,6 +144,13 @@ func (g *BirdGame) Update() error {
 	enemymanager.Update(g.player, &g.loadedLocations[0])
 
 	inputEvents.UpdateInputEvents()
+
+	if g.player.Corpse {
+		g.player.InitPlayer(1000, 1500, g.player.PlayerDto)
+		enemymanager.ReInit()
+
+	}
+
 	return nil
 }
 
